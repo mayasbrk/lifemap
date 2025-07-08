@@ -7,42 +7,40 @@
     <meta name="theme-color" content="#3b82f6"/>
     <link id="manifest-link" rel="manifest">
     
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    
+
     <style>
         :root {
             --font-family: 'Inter', sans-serif;
             --transition-speed: 0.3s;
-            --border-radius: 12px;
+            --border-radius: 16px;
+            --border-radius-sm: 10px;
 
             /* Light Theme */
-            --bg-light: #f9f9f9;
+            --bg-light: #f4f7fe;
             --card-bg-light: #ffffff;
             --text-light: #1a1a1a;
             --text-secondary-light: #6b7280;
             --border-light: #e5e7eb;
             --accent-light: #3b82f6;
             --accent-hover-light: #2563eb;
-            --pomodoro-bg-light: #eef2ff;
+            --accent-soft-light: rgba(59, 130, 246, 0.1);
 
             /* Dark Theme */
-            --bg-dark: #111827;
-            --card-bg-dark: #1f2937;
-            --text-dark: #f9fafb;
+            --bg-dark: #0f172a;
+            --card-bg-dark: #1e293b;
+            --text-dark: #f8fafc;
             --text-secondary-dark: #9ca3af;
-            --border-dark: #374151;
+            --border-dark: #334155;
             --accent-dark: #60a5fa;
             --accent-hover-dark: #3b82f6;
-            --pomodoro-bg-dark: #1e293b;
+            --accent-soft-dark: rgba(96, 165, 250, 0.1);
         }
 
         [data-theme="light"] {
@@ -53,7 +51,7 @@
             --border-color: var(--border-light);
             --accent-color: var(--accent-light);
             --accent-hover-color: var(--accent-hover-light);
-            --pomodoro-bg-color: var(--pomodoro-bg-light);
+            --accent-soft-color: var(--accent-soft-light);
         }
 
         [data-theme="dark"] {
@@ -64,7 +62,7 @@
             --border-color: var(--border-dark);
             --accent-color: var(--accent-dark);
             --accent-hover-color: var(--accent-hover-dark);
-            --pomodoro-bg-color: var(--pomodoro-bg-dark);
+            --accent-soft-color: var(--accent-soft-dark);
         }
 
         /* --- Base Styles --- */
@@ -83,6 +81,7 @@
             margin-bottom: 25px;
         }
         h1 { font-size: 28px; font-weight: 700; margin-bottom: 0; }
+        h2 { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
         .page-header .actions { display: flex; gap: 8px; }
         
         /* --- Bottom Navigation Bar --- */
@@ -90,170 +89,100 @@
             position: fixed; bottom: 0; left: 0; right: 0; height: 80px;
             background-color: var(--card-bg-color); border-top: 1px solid var(--border-color);
             display: flex; justify-content: space-around; align-items: flex-start;
-            padding-top: 10px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000;
+            padding-top: 10px; box-shadow: 0 -5px 25px rgba(0,0,0,0.07); z-index: 1000;
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; cursor: pointer;
-            color: var(--text-secondary-color); transition: color 0.2s; position: relative; width: 60px;
+            color: var(--text-secondary-color); transition: color 0.2s, transform 0.2s; position: relative; width: 60px;
         }
-        .nav-item.active { color: var(--accent-color); }
+        .nav-item.active { color: var(--accent-color); font-weight: 600; }
+        .nav-item:hover { transform: translateY(-3px); }
         .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
-        .nav-item span { font-size: 12px; font-weight: 500; }
+        .nav-item span { font-size: 12px; }
         .nav-indicator {
-            position: absolute; bottom: -10px; width: 24px; height: 4px;
-            background-color: var(--accent-color); border-radius: 2px; opacity: 0;
-            transform: scaleX(0.5); transition: opacity 0.3s ease, transform 0.3s ease;
+            position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px;
+            background-color: var(--accent-color); border-radius: 50%; opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .nav-item.active .nav-indicator { opacity: 1; transform: scaleX(1); }
+        .nav-item.active .nav-indicator { opacity: 1; }
 
         /* --- UI Components --- */
         .card {
             background-color: var(--card-bg-color); border: 1px solid var(--border-color);
             border-radius: var(--border-radius); padding: 20px; margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -2px rgba(0,0,0,0.03);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .btn {
             background-color: var(--accent-color); color: white; border: none; padding: 12px 20px;
-            border-radius: var(--border-radius); font-size: 16px; font-family: var(--font-family);
-            font-weight: 500; cursor: pointer; transition: all var(--transition-speed);
+            border-radius: var(--border-radius-sm); font-size: 16px; font-family: var(--font-family);
+            font-weight: 600; cursor: pointer; transition: all var(--transition-speed) ease;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn:hover { background-color: var(--accent-hover-color); transform: translateY(-2px); }
-        .btn-secondary { background-color: transparent; color: var(--text-color); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background-color: var(--bg-color); }
+        .btn:hover { background-color: var(--accent-hover-color); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-secondary { background-color: var(--accent-soft-color); color: var(--accent-color); border: none; }
+        .btn-secondary:hover { background-color: var(--accent-color); color: white; }
         .icon-btn {
             background: none; border: none; cursor: pointer; color: var(--text-secondary-color);
             padding: 8px; border-radius: 50%; transition: all 0.2s;
         }
-        .icon-btn:hover { background-color: var(--border-color); color: var(--text-color); }
+        .icon-btn:hover { background-color: var(--accent-soft-color); color: var(--accent-color); }
         .fab {
             position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px;
             border-radius: 50%; font-size: 28px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
             z-index: 999; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- Pomodoro Timer --- */
-        .pomodoro-container {
-            background-color: var(--pomodoro-bg-color);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .pomodoro-modes {
-            display: flex;
-            justify-content: center;
-            background-color: var(--bg-color);
-            border-radius: 25px;
-            padding: 5px;
-            margin-bottom: 20px;
-        }
-        .pomodoro-mode-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: none;
-            color: var(--text-secondary-color);
-            font-family: var(--font-family);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-        .pomodoro-mode-btn.active {
-            background-color: var(--card-bg-color);
-            color: var(--text-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        .timer-display-wrapper {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 20px auto;
-        }
-        .timer-progress-ring {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            transform: rotate(-90deg);
-        }
-        .timer-progress-ring circle {
-            transition: stroke-dashoffset 0.5s linear;
-        }
-        .timer-time {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--text-color);
-        }
-        .pomodoro-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-        #pomodoro-start-stop-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            font-size: 24px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        /* --- Focus To-Do List --- */
-        .focus-todo-container h3 { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
-        .focus-todo-list li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .focus-todo-list li:last-child { border-bottom: none; }
-        .focus-todo-list .checkbox {
-            width: 20px; height: 20px; border: 2px solid var(--border-color);
-            border-radius: 6px; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; flex-shrink: 0;
-            transition: all 0.2s;
-        }
-        .focus-todo-list .checkbox svg { opacity: 0; transition: opacity 0.2s; }
-        .focus-todo-list li.completed .checkbox { background-color: var(--accent-color); border-color: var(--accent-color); }
-        .focus-todo-list li.completed .checkbox svg { opacity: 1; }
-        .focus-todo-list li.completed span { text-decoration: line-through; color: var(--text-secondary-color); }
-        #new-focus-task-input {
-            width: 100%;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: var(--border-radius);
-            margin-top: 10px;
-        }
-
-        /* --- Other Styles (abbreviated for brevity) --- */
-        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; }
-        .list-item:last-child { border-bottom: none; }
+        /* --- List Item Styles (General) --- */
+        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: var(--border-radius-sm); margin-bottom: 10px; background-color: var(--bg-color); cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+        .list-item:hover { transform: translateY(-2px); background-color: var(--accent-soft-color); }
         .list-item .content { flex-grow: 1; min-width: 0; }
-        .list-item .title { font-weight: 500; }
+        .list-item .title { font-weight: 600; transition: color 0.2s; }
         .list-item .subtitle { font-size: 14px; color: var(--text-secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-start; z-index: 2000; padding-top: 5vh; overflow-y: auto; }
-        .modal-content { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius); width: 90%; max-width: 500px; margin-bottom: 5vh; }
-        .list-item-properties { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .property-tag { background-color: var(--bg-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--text-secondary-color); }
-        .property-tag strong { color: var(--text-color); }
-        .gallery-card { border: 1px solid var(--border-color); background-color: var(--card-bg-color); border-radius: var(--border-radius); margin-bottom: 20px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
-        .gallery-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.07); }
-        .gallery-card-banner { height: 120px; background: linear-gradient(45deg, var(--accent-color), var(--accent-hover-color)); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold; }
-        .gallery-card-content { padding: 20px; }
-        .gallery-card-content h3 { font-size: 20px; margin-bottom: 10px; }
-        .gallery-card-content p { font-size: 15px; color: var(--text-secondary-color); margin-bottom: 20px; }
+        .delete-btn { background: none; border: none; color: var(--text-secondary-color); cursor: pointer; transition: all 0.2s; }
+        .delete-btn:hover { color: #ef4444; transform: scale(1.1); }
+        
+        /* --- To-Do Item Specifics --- */
+        .todo-item .checkbox { width: 24px; height: 24px; border: 2px solid var(--text-secondary-color); border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; flex-shrink: 0; background-color: transparent; }
+        .todo-item.completed .checkbox { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
+        .todo-item.completed .title { text-decoration: line-through; color: var(--text-secondary-color); }
+        .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .priority-dot.high { background-color: #ef4444; }
+        .priority-dot.medium { background-color: #f97316; }
+        .priority-dot.low { background-color: #84cc16; }
+
+        /* --- Modal & Forms --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-content { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius); width: 100%; max-width: 500px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--text-secondary-color); }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-family); font-size: 15px; }
+        .modal-actions { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
+        
+        /* --- Pomodoro Timer Modal --- */
+        #pomodoro-modal .modal-content { text-align: center; }
+        #pomodoro-timer-display { font-size: 72px; font-weight: 700; color: var(--accent-color); margin: 20px 0; font-variant-numeric: tabular-nums; }
+        #pomodoro-status { font-size: 18px; font-weight: 500; color: var(--text-secondary-color); margin-bottom: 20px; }
+        #pomodoro-controls button { width: 100px; }
+        
+        /* --- Charts --- */
+        .chart-container { position: relative; height: 250px; width: 100%; }
+
+        /* --- Graph View --- */
+        #graph-view-container { width: 100%; height: 65vh; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--card-bg-color); }
+        
+        /* --- Animations & Misc --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .page.active { animation: fadeIn 0.5s ease-out; }
+        .list-item, .card { animation: slideInUp 0.4s ease-out; }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Pages -->
     <div id="dashboard" class="page active">
         <div class="page-header">
             <h1><span id="greeting"></span></h1>
@@ -272,316 +201,587 @@
                 </div>
             </div>
         </div>
-        <div class="card" id="ai-recommendation-card"><h2 class="h2">💡 توصية ذكية</h2><p id="ai-recommendation-text"></p></div>
-        <div class="card"><h2>🎯 أهدافك النشطة</h2><div id="dashboard-goals-list"></div></div>
-    </div>
-    <div id="focus" class="page">
-        <div class="page-header"><h1>وضع التركيز</h1></div>
-        <div class="pomodoro-container">
-            <div class="pomodoro-modes">
-                <button class="pomodoro-mode-btn active" data-mode="pomodoro">تركيز</button>
-                <button class="pomodoro-mode-btn" data-mode="shortBreak">استراحة قصيرة</button>
-                <button class="pomodoro-mode-btn" data-mode="longBreak">استراحة طويلة</button>
+        <div class="card">
+            <h2>📊 الإنجاز الأسبوعي</h2>
+            <div class="chart-container">
+                <canvas id="weekly-progress-chart"></canvas>
             </div>
-            <div class="timer-display-wrapper">
-                <svg class="timer-progress-ring" width="220" height="220">
-                    <circle stroke="var(--border-color)" stroke-width="10" fill="transparent" r="100" cx="110" cy="110" />
-                    <circle id="timer-progress-circle" stroke="var(--accent-color)" stroke-width="10" stroke-linecap="round" fill="transparent" r="100" cx="110" cy="110" />
-                </svg>
-                <div id="timer-time" class="timer-time">25:00</div>
-            </div>
-            <div class="pomodoro-controls">
-                <button id="pomodoro-start-stop-btn" class="btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734L10.804 8z"/></svg>
-                </button>
-            </div>
-        </div>
-        <div class="card focus-todo-container">
-            <h3>مهام هذه الجلسة</h3>
-            <ul id="focus-todo-list" class="focus-todo-list"></ul>
-            <input type="text" id="new-focus-task-input" placeholder="أضف مهمة جديدة...">
         </div>
         <div class="card">
-            <h3>تتبع العادات</h3>
-            <canvas id="habit-chart"></canvas>
+            <h2>🎯 مهام اليوم</h2>
+            <div id="dashboard-todos-list"></div>
         </div>
     </div>
-    <div id="habits" class="page">
-        <div class="page-header"><h1>العادات</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
-        <div class="card" id="habits-list"></div>
+    
+    <div id="todos" class="page">
+        <div class="page-header"><h1>مهام اليوم</h1></div>
+        <div id="todos-list-container"></div>
     </div>
+
     <div id="goals" class="page">
-        <div class="page-header"><h1>الأهداف</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
-        <div class="view-toggler" id="goals-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="board">لوحة</button><button data-view="calendar">تقويم</button></div>
-        <div id="goals-content"></div>
+        <div class="page-header"><h1>الأهداف</h1></div>
+        <div id="goals-list-container"></div>
     </div>
-    <div id="journal" class="page">
-        <div class="page-header"><h1>دفتر اليوميات</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
-        <div class="view-toggler" id="journal-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="calendar">تقويم</button></div>
-        <div id="journal-content"></div>
-    </div>
-    <div id="gallery" class="page">
-        <div class="page-header"><h1>المعرض</h1></div>
-        <div id="gallery-list"></div>
-    </div>
+    
     <div id="graph" class="page">
-        <div class="page-header"><h1>خريطة الحياة</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
+        <div class="page-header"><h1>خريطة الحياة</h1></div>
         <div id="graph-view-container"></div>
     </div>
+
     <div id="settings" class="page">
         <div class="page-header"><h1>الإعدادات</h1></div>
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><label for="username-input">الاسم</label><input type="text" id="username-input" style="width: 50%; text-align: left; direction: ltr; border: none; background: transparent; font-size: 16px; color: var(--text-color);"></div>
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><span>الوضع الليلي</span><label class="theme-switch" style="position: relative; display: inline-block; width: 50px; height: 28px;"><input type="checkbox" id="theme-toggle" style="opacity: 0; width: 0; height: 0;"><span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px;"><span class="slider-knob" style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span></span></label></div>
-            <div style="padding: 15px 0; border-bottom: 1px solid var(--border-color);">
-                <button id="manage-properties-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">إدارة الخصائص</button>
-                <button id="manage-templates-btn" class="btn btn-secondary" style="width: 100%;">إدارة القوالب</button>
+            <div style="padding: 15px 0;">
+                <button id="reset-data-btn" class="btn btn-secondary" style="width: 100%; background-color: #ef444420; color: #ef4444;">إعادة تعيين كل البيانات</button>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;"><span>إعادة تعيين كل البيانات</span><button id="reset-data-btn" class="btn" style="background-color: #ef4444;">إعادة تعيين</button></div>
         </div>
     </div>
-    <div id="templates" class="page">
-        <div class="page-header"><h1>إدارة القوالب</h1><button class="icon-btn" data-action="open-settings-from-subpage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
-        <div class="card" id="templates-list-container"><div id="templates-list"></div><button id="add-template-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة قالب جديد</button></div>
-    </div>
-    <div id="properties" class="page">
-        <div class="page-header"><h1>إدارة الخصائص</h1><button class="icon-btn" data-action="open-settings-from-subpage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
-        <div class="card" id="properties-list-container"><div id="properties-list"></div><button id="add-property-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة خاصية جديدة</button></div>
+
+</div>
+
+<nav class="bottom-nav"></nav>
+
+<button id="fab-add" class="btn fab">+</button>
+
+<div id="modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="modal-title"></h3>
+        <form id="modal-form">
+            <input type="hidden" id="edit-id"><input type="hidden" id="edit-type">
+            <div class="form-group" id="title-group"><label for="item-title">العنوان</label><input type="text" id="item-title" required></div>
+            <div class="form-group" id="description-group"><label for="item-description">الوصف / المحتوى</label><textarea id="item-description" rows="4"></textarea><p class="hint" style="font-size: 12px; color: var(--text-secondary-color); margin-top: 5px;">لإنشاء رابط، اكتب [[عنوان العنصر]]</p></div>
+            
+            <div id="todo-fields">
+                <div class="form-group">
+                    <label for="todo-priority">الأولوية</label>
+                    <select id="todo-priority">
+                        <option value="low">منخفضة</option>
+                        <option value="medium" selected>متوسطة</option>
+                        <option value="high">عالية</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="todo-pomodoros">عدد جلسات التركيز (Pomodoros)</label>
+                    <input type="number" id="todo-pomodoros" value="1" min="1">
+                </div>
+            </div>
+
+            <div id="goal-fields" style="display:none;">
+                <div class="form-group"><label for="goal-deadline">تاريخ الانتهاء</label><input type="date" id="goal-deadline"></div>
+                 <div class="form-group">
+                    <label for="goal-pillar">المحور الأساسي</label>
+                    <select id="goal-pillar">
+                        <option value="none">بدون</option>
+                        <option value="career">💼 المهنة</option>
+                        <option value="finance">💰 المال</option>
+                        <option value="health">❤️‍🩹 الصحة</option>
+                        <option value="growth">🧠 النمو</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="modal-cancel" class="btn btn-secondary">إلغاء</button>
+                <button type="submit" class="btn">حفظ</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Bottom Navigation -->
-<nav class="bottom-nav"></nav>
+<div id="pomodoro-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="pomodoro-task-title"></h3>
+        <div id="pomodoro-timer-display">25:00</div>
+        <p id="pomodoro-status">حان وقت التركيز!</p>
+        <div id="pomodoro-controls" class="modal-actions" style="justify-content: center;">
+            <button id="pomodoro-start" class="btn">ابدأ</button>
+            <button id="pomodoro-pause" class="btn btn-secondary" style="display: none;">إيقاف مؤقت</button>
+            <button id="pomodoro-reset" class="btn btn-secondary">إعادة</button>
+        </div>
+        <button id="pomodoro-close" class="icon-btn" style="position: absolute; top: 15px; right: 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+    </div>
+</div>
 
-<!-- FAB -->
-<button id="fab-add" class="btn fab">+</button>
-
-<!-- Modals (abbreviated for brevity) -->
-<div id="modal" class="modal-overlay">...</div>
-<div id="search-modal" class="modal-overlay">...</div>
-<div id="templates-modal" class="modal-overlay">...</div>
-<div id="properties-modal" class="modal-overlay">...</div>
-<div id="confirmation-modal" class="modal-overlay">...</div>
-
-<!-- Confetti Canvas -->
-<canvas id="confetti-canvas"></canvas>
+<div id="confirmation-modal" class="modal-overlay"><div class="modal-content" style="text-align: center;"><h3 id="confirmation-title"></h3><p id="confirmation-message" style="margin: 15px 0;"></p><div class="modal-actions" style="justify-content: center;"><button type="button" id="confirmation-cancel" class="btn btn-secondary">إلغاء</button><button type="button" id="confirmation-confirm" class="btn">تأكيد</button></div></div></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const app = {
         state: {},
-        calendarState: { goals: { date: new Date() }, journal: { date: new Date() } },
+        charts: {},
         pomodoro: {
             timer: null,
-            mode: 'pomodoro',
-            time: 25 * 60,
-            isActive: false,
-            modes: { pomodoro: 25, shortBreak: 5, longBreak: 15 }
+            taskId: null,
+            timeLeft: 25 * 60,
+            initialTime: 25 * 60,
+            isPaused: true,
+            mode: 'work', // 'work', 'shortBreak', 'longBreak'
+            sessions: 0,
         },
-        habitChartInstance: null,
         navItems: [
             { id: 'dashboard', label: 'الرئيسية', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" /></svg>` },
-            { id: 'focus', label: 'التركيز', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` },
-            { id: 'habits', label: 'العادات', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691v-2.985a2.25 2.25 0 00-2.25-2.25h-2.985a2.25 2.25 0 00-2.25 2.25v2.985" /></svg>` },
+            { id: 'todos', label: 'المهام', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` },
             { id: 'goals', label: 'الأهداف', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 19.875v-6.75zM3 8.625c0-.621.504-1.125 1.125-1.25h15.75c.621 0 1.125.504 1.125 1.125v.375c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 9V8.625z" /></svg>` },
-            { id: 'journal', label: 'اليوميات', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>` },
-            { id: 'gallery', label: 'المعرض', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>` },
             { id: 'graph', label: 'الخريطة', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>` },
         ],
-        // ... (rest of the state and methods from previous versions)
+        ranks: [ { name: 'مبتدئ', xp: 0 }, { name: 'منظم', xp: 100 }, { name: 'مثابر', xp: 300 }, { name: 'مُنجز', xp: 700 }, { name: 'خبير', xp: 1500 }, { name: 'سيد الحياة', xp: 3000 } ],
         
-        // --- Page Renderers ---
-        render() {
-            const renderMap = { 
-                'dashboard': this.renderDashboard, 'focus': this.renderFocusPage, 'habits': this.renderHabits, 
-                'goals': this.renderGoals, 'journal': this.renderJournal, 'gallery': this.renderGalleryPage, 
-                'graph': this.renderGraph, 'settings': this.renderSettings, 'templates': this.renderTemplatesPage, 
-                'properties': this.renderPropertiesPage 
+        init() { this.loadState(); this.setupEventListeners(); this.applyTheme(this.state.settings.theme); this.renderNav(); this.navigateTo(this.state.currentPage || 'dashboard', true); this.initPWA(); },
+        loadState() {
+            const savedState = localStorage.getItem('lifeMapState');
+            if (savedState) {
+                this.state = JSON.parse(savedState);
+                if(!this.state.todos) this.state.todos = [];
+            } else { this.resetState(); }
+        },
+        resetState() {
+            this.state = {
+                user: { name: 'مستكشف', xp: 0 },
+                todos: [
+                    { id: 'td1', title: 'إعداد خطة الأسبوع', completed: false, priority: 'high', pomodoros_total: 2, pomodoros_completed: 1, createdAt: new Date().toISOString() },
+                    { id: 'td2', title: 'الرد على رسائل البريد الإلكتروني', completed: true, priority: 'medium', pomodoros_total: 1, pomodoros_completed: 1, createdAt: new Date().toISOString() }
+                ],
+                goals: [ { id: 'g1', title: 'إطلاق النسخة الأولى من LifeMap', description: 'إنهاء البرمجة والنشر.', deadline: '2025-07-15', pillar: 'career', createdAt: new Date().toISOString(), linkedItems: [] } ],
+                settings: { theme: 'light', lastOpened: new Date().toISOString().slice(0, 10) },
+                currentPage: 'dashboard',
             };
-            const oldPage = this.state.currentPage;
-            if (oldPage === 'focus') {
-                this.pausePomodoro(); // Pause timer when navigating away
+            this.saveState();
+        },
+        saveState() { localStorage.setItem('lifeMapState', JSON.stringify(this.state)); },
+        navigateTo(pageId, isInitial = false) {
+            document.querySelector('.page.active')?.classList.remove('active');
+            this.state.currentPage = pageId;
+            const newPage = document.getElementById(pageId);
+            if(newPage) newPage.classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const isActive = item.dataset.page === pageId;
+                item.classList.toggle('active', isActive);
+                if (isActive) item.querySelector('.nav-indicator').style.opacity = '1';
+                else item.querySelector('.nav-indicator').style.opacity = '0';
+            });
+            
+            document.getElementById('fab-add').style.display = ['dashboard', 'graph', 'settings'].includes(pageId) ? 'none' : 'flex';
+            
+            if (!isInitial && newPage) {
+                anime({ targets: newPage, opacity: [0, 1], translateY: [10, 0], duration: 400, easing: 'easeOutCubic' });
             }
+            this.render();
+        },
+        render() {
+            const renderMap = { 'dashboard': this.renderDashboard, 'todos': this.renderTodos, 'goals': this.renderGoals, 'graph': this.renderGraph, 'settings': this.renderSettings };
             renderMap[this.state.currentPage]?.call(this);
             this.saveState();
         },
-
-        renderFocusPage() {
-            this.initPomodoro();
-            this.initFocusTodoList();
-            this.renderHabitChart();
-        },
-
-        // --- Pomodoro Logic ---
-        initPomodoro() {
-            const modeButtons = document.querySelectorAll('.pomodoro-mode-btn');
-            modeButtons.forEach(btn => btn.addEventListener('click', () => this.switchPomodoroMode(btn.dataset.mode)));
+        renderNav() { const navContainer = document.querySelector('.bottom-nav'); navContainer.innerHTML = this.navItems.map(item => `<div class="nav-item ${this.state.currentPage === item.id ? 'active' : ''}" data-page="${item.id}">${item.icon}<span>${item.label}</span><div class="nav-indicator"></div></div>`).join(''); },
+        renderDashboard() {
+            document.getElementById('greeting').textContent = `أهلاً، ${this.state.user.name || 'مستكشف'}!`;
+            this.updateRank();
             
-            document.getElementById('pomodoro-start-stop-btn').addEventListener('click', () => {
-                if (this.pomodoro.isActive) {
-                    this.pausePomodoro();
+            const todosList = document.getElementById('dashboard-todos-list');
+            const activeTodos = this.state.todos.filter(t => !t.completed).slice(0, 3);
+            todosList.innerHTML = activeTodos.length === 0 ? `<p style="color: var(--text-secondary-color); text-align:center; padding: 20px 0;">رائع! لا توجد مهام متبقية لليوم.</p>` : activeTodos.map(todo => this.createListItem(todo, 'todo').outerHTML).join('');
+            
+            this.renderWeeklyProgressChart();
+        },
+        renderTodos() {
+            const container = document.getElementById('todos-list-container');
+            container.innerHTML = this.state.todos.length === 0 ? `<div class="card" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ بإضافة مهامك لليوم.</div>` : this.state.todos.map(todo => this.createListItem(todo, 'todo').outerHTML).join('');
+        },
+        renderGoals() {
+            const container = document.getElementById('goals-list-container');
+            container.innerHTML = this.state.goals.length === 0 ? `<div class="card" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">خطط لمستقبلك عبر إضافة أهداف جديدة.</div>` : this.state.goals.map(goal => this.createListItem(goal, 'goal').outerHTML).join('');
+        },
+        renderSettings() {
+            document.getElementById('username-input').value = this.state.user.name;
+            document.getElementById('theme-toggle').checked = this.state.settings.theme === 'dark';
+        },
+        renderGraph() {
+            const container = document.getElementById('graph-view-container');
+            const nodes = new vis.DataSet([
+                ...this.state.todos.map(i => ({ id: i.id, label: i.title, group: 'todos' })), 
+                ...this.state.goals.map(i => ({ id: i.id, label: i.title, group: 'goals' })),
+            ]);
+            const edges = new vis.DataSet([
+                ...[...this.state.todos, ...this.state.goals].flatMap(item => (item.linkedItems || []).map(linkId => ({ from: item.id, to: linkId })))
+            ]);
+            const data = { nodes, edges };
+            const options = {
+                layout: { hierarchical: false },
+                groups: {
+                    todos: { color: { background: '#22c55e', border: '#16a34a' }, font: { color: 'white' } },
+                    goals: { color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white' } },
+                },
+                edges: { color: { color: getComputedStyle(document.body).getPropertyValue('--border-color'), highlight: getComputedStyle(document.body).getPropertyValue('--accent-color') } },
+                physics: { stabilization: true },
+                interaction: { hover: true },
+            };
+            new vis.Network(container, data, options);
+        },
+        createListItem(item, type) {
+            const div = document.createElement('div');
+            div.className = `list-item ${type}-item`;
+            div.dataset.id = item.id;
+            div.dataset.type = type;
+            let contentHTML = '';
+
+            switch (type) {
+                case 'todo':
+                    div.classList.toggle('completed', item.completed);
+                    contentHTML = `
+                        <div class="checkbox" data-action="toggle-todo">${item.completed ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}</div>
+                        <div class="priority-dot ${item.priority}"></div>
+                        <div class="content">
+                            <div class="title">${item.title}</div>
+                            <div class="subtitle">التركيز: ${item.pomodoros_completed || 0} / ${item.pomodoros_total} جلسة</div>
+                        </div>
+                        <button class="icon-btn" data-action="start-pomodoro"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg></button>
+                    `;
+                    break;
+                case 'goal':
+                    const pillarIcons = { career: '💼', finance: '💰', health: '❤️‍🩹', growth: '🧠' };
+                    contentHTML = `
+                        <div class="content">
+                            <div class="title">${pillarIcons[item.pillar] || ''} ${item.title}</div>
+                            <div class="subtitle">${item.description.substring(0, 50)}...</div>
+                        </div>
+                    `;
+                    break;
+            }
+            div.innerHTML = contentHTML + `<button class="delete-btn" data-action="delete-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
+            return div;
+        },
+        setupEventListeners() {
+            document.querySelector('.bottom-nav').addEventListener('click', e => {
+                const navItem = e.target.closest('.nav-item');
+                if (navItem) this.navigateTo(navItem.dataset.page);
+            });
+            document.getElementById('fab-add').addEventListener('click', () => this.openModal());
+            document.getElementById('modal-form').addEventListener('submit', e => { e.preventDefault(); this.saveItem(); });
+            document.getElementById('modal-cancel').addEventListener('click', () => this.closeModal('modal'));
+            document.getElementById('username-input').addEventListener('change', e => { this.state.user.name = e.target.value; this.saveState(); this.renderDashboard(); });
+            document.getElementById('theme-toggle').addEventListener('change', e => this.applyTheme(e.target.checked ? 'dark' : 'light'));
+            document.getElementById('reset-data-btn').addEventListener('click', () => { this.showConfirmation('إعادة تعيين البيانات', 'هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.', () => { this.resetState(); location.reload(); }); });
+            
+            document.querySelector('.container').addEventListener('click', e => {
+                const actionTarget = e.target.closest('[data-action]');
+                if (actionTarget) {
+                    const action = actionTarget.dataset.action;
+                    const listItem = actionTarget.closest('.list-item');
+                    const id = listItem?.dataset.id;
+                    const type = listItem?.dataset.type;
+
+                    switch(action) {
+                        case 'toggle-todo': this.toggleTodo(id); break;
+                        case 'start-pomodoro': this.openPomodoroModal(id); break;
+                        case 'delete-item': this.deleteItem(id, type); break;
+                        case 'open-settings': this.navigateTo('settings'); break;
+                    }
                 } else {
-                    this.startPomodoro();
+                    const listItem = e.target.closest('.list-item');
+                    if(listItem) this.openModal(listItem.dataset.id, listItem.dataset.type);
                 }
             });
-            this.updatePomodoroDisplay();
-        },
-        switchPomodoroMode(mode) {
-            this.pomodoro.mode = mode;
-            this.pomodoro.isActive = false;
-            clearInterval(this.pomodoro.timer);
-            this.pomodoro.timer = null;
-            this.pomodoro.time = this.pomodoro.modes[mode] * 60;
             
-            document.querySelectorAll('.pomodoro-mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.pomodoro-mode-btn[data-mode="${mode}"]`).classList.add('active');
-            
-            this.updatePomodoroDisplay();
-            document.getElementById('pomodoro-start-stop-btn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734L10.804 8z"/></svg>`;
+            // Pomodoro Modal listeners
+            document.getElementById('pomodoro-start').addEventListener('click', () => this.startPomodoro());
+            document.getElementById('pomodoro-pause').addEventListener('click', () => this.pausePomodoro());
+            document.getElementById('pomodoro-reset').addEventListener('click', () => this.resetPomodoro());
+            document.getElementById('pomodoro-close').addEventListener('click', () => this.closeModal('pomodoro-modal'));
         },
-        startPomodoro() {
-            if(Tone.context.state !== 'running') {
-                Tone.start();
+        openModal(id = null, type = null) {
+            const modal = document.getElementById('modal');
+            const form = document.getElementById('modal-form');
+            form.reset();
+            
+            const currentType = type || (this.state.currentPage === 'todos' ? 'todo' : 'goal');
+            
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-type').value = currentType;
+            
+            // Toggle visibility of fields based on type
+            document.getElementById('todo-fields').style.display = currentType === 'todo' ? 'block' : 'none';
+            document.getElementById('goal-fields').style.display = currentType === 'goal' ? 'block' : 'none';
+            document.getElementById('description-group').style.display = currentType === 'goal' ? 'block' : 'none';
+
+            if (id) {
+                const item = this.findItem(id, currentType);
+                document.getElementById('modal-title').textContent = `تعديل ${this.getItemTypeName(currentType)}`;
+                document.getElementById('item-title').value = item.title;
+                if(currentType === 'todo') {
+                    document.getElementById('todo-priority').value = item.priority;
+                    document.getElementById('todo-pomodoros').value = item.pomodoros_total;
+                } else if (currentType === 'goal') {
+                    document.getElementById('item-description').value = item.description || '';
+                    document.getElementById('goal-deadline').value = item.deadline || '';
+                    document.getElementById('goal-pillar').value = item.pillar || 'none';
+                }
+            } else {
+                document.getElementById('modal-title').textContent = `إضافة ${this.getItemTypeName(currentType)}`;
             }
-            this.pomodoro.isActive = true;
-            document.getElementById('pomodoro-start-stop-btn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/></svg>`;
-            this.pomodoro.timer = setInterval(() => {
-                this.pomodoro.time--;
-                this.updatePomodoroDisplay();
-                if (this.pomodoro.time <= 0) {
-                    this.pausePomodoro();
-                    this.playPomodoroEndSound();
-                    // Optional: Auto-switch to next mode
-                }
-            }, 1000);
-        },
-        pausePomodoro() {
-            this.pomodoro.isActive = false;
-            clearInterval(this.pomodoro.timer);
-            this.pomodoro.timer = null;
-            document.getElementById('pomodoro-start-stop-btn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734L10.804 8z"/></svg>`;
-        },
-        updatePomodoroDisplay() {
-            const minutes = Math.floor(this.pomodoro.time / 60);
-            const seconds = this.pomodoro.time % 60;
-            document.getElementById('timer-time').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             
-            const progressCircle = document.getElementById('timer-progress-circle');
-            const totalTime = this.pomodoro.modes[this.pomodoro.mode] * 60;
-            const progress = (totalTime - this.pomodoro.time) / totalTime;
-            const circumference = 2 * Math.PI * 100; // radius is 100
-            const offset = circumference * (1 - progress);
-            progressCircle.style.strokeDasharray = circumference;
-            progressCircle.style.strokeDashoffset = offset;
+            modal.style.display = 'flex';
+            anime({ targets: '#modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' });
         },
-        playPomodoroEndSound() {
-            const synth = new Tone.Synth().toDestination();
-            synth.triggerAttackRelease("C5", "8n", Tone.now());
-            synth.triggerAttackRelease("G5", "8n", Tone.now() + 0.2);
+        closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            anime({ targets: `#${modalId} .modal-content`, opacity: [1, 0], scale: [1, 0.9], duration: 300, easing: 'easeInCubic', complete: () => modal.style.display = 'none' });
         },
-
-        // --- Focus To-Do List Logic ---
-        initFocusTodoList() {
-            const input = document.getElementById('new-focus-task-input');
-            input.addEventListener('keypress', e => {
-                if (e.key === 'Enter' && input.value.trim() !== '') {
-                    this.addFocusTask(input.value.trim());
-                    input.value = '';
-                }
-            });
-            document.getElementById('focus-todo-list').addEventListener('click', e => {
-                if (e.target.closest('.checkbox')) {
-                    e.target.closest('li').classList.toggle('completed');
-                }
-            });
-        },
-        addFocusTask(text) {
-            const list = document.getElementById('focus-todo-list');
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="checkbox">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>
-                </div>
-                <span>${text}</span>
-            `;
-            list.appendChild(li);
-            anime({ targets: li, opacity: [0, 1], translateY: [10, 0], duration: 300 });
-        },
-
-        // --- Habit Chart Logic ---
-        renderHabitChart() {
-            if (this.habitChartInstance) {
-                this.habitChartInstance.destroy();
+        saveItem() {
+            const id = document.getElementById('edit-id').value;
+            const type = document.getElementById('edit-type').value;
+            const title = document.getElementById('item-title').value;
+            let collection = this.state[type + 's'];
+            
+            let itemData;
+            if (type === 'todo') {
+                itemData = {
+                    title: title,
+                    priority: document.getElementById('todo-priority').value,
+                    pomodoros_total: parseInt(document.getElementById('todo-pomodoros').value, 10),
+                };
+            } else if (type === 'goal') {
+                itemData = {
+                    title: title,
+                    description: document.getElementById('item-description').value,
+                    deadline: document.getElementById('goal-deadline').value,
+                    pillar: document.getElementById('goal-pillar').value,
+                };
             }
-            const ctx = document.getElementById('habit-chart').getContext('2d');
-            const labels = this.state.habits.map(h => h.title);
-            const data = this.state.habits.map(h => h.streak);
+            
+            if (id) {
+                const itemIndex = collection.findIndex(i => i.id === id);
+                if (itemIndex > -1) collection[itemIndex] = { ...collection[itemIndex], ...itemData };
+            } else {
+                const newItem = {
+                    id: type.charAt(0) + Date.now(),
+                    createdAt: new Date().toISOString(),
+                    ...itemData
+                };
+                if(type === 'todo') {
+                    newItem.completed = false;
+                    newItem.pomodoros_completed = 0;
+                }
+                collection.push(newItem);
+            }
+            
+            this.closeModal('modal');
+            this.render();
+        },
+        deleteItem(id, type) {
+            this.showConfirmation('تأكيد الحذف', `هل أنت متأكد من حذف هذا الـ ${this.getItemTypeName(type)}؟`, () => {
+                this.state[type + 's'] = this.state[type + 's'].filter(item => item.id !== id);
+                this.render();
+                this.closeModal('confirmation-modal');
+            });
+        },
+        toggleTodo(id) {
+            const todo = this.findItem(id, 'todo');
+            if (!todo) return;
+            todo.completed = !todo.completed;
+            this.addXP(todo.completed ? 10 : -10);
+            if(todo.completed) todo.completedAt = new Date().toISOString();
+            else todo.completedAt = null;
+            this.render();
+        },
+        findItem(id, type) { return this.state[type + 's']?.find(i => i.id === id); },
+        getItemTypeName(type) { return ({ 'todo': 'مهمة', 'goal': 'هدف' })[type] || 'عنصر'; },
+        addXP(amount) { this.state.user.xp += amount; this.updateRank(); },
+        updateRank() {
+            const currentXP = this.state.user.xp;
+            const currentRank = this.ranks.filter(r => r.xp <= currentXP).pop() || this.ranks[0];
+            const nextRank = this.ranks.find(r => r.xp > currentXP);
+            document.getElementById('rank-name').textContent = currentRank.name;
+            document.getElementById('xp-current').textContent = `${currentXP} XP`;
+            if (nextRank) {
+                const progress = ((currentXP - currentRank.xp) / (nextRank.xp - currentRank.xp)) * 100;
+                document.getElementById('xp-next-rank').textContent = `${nextRank.xp} XP`;
+                document.getElementById('xp-progress-bar').style.width = `${progress}%`;
+            } else {
+                document.getElementById('xp-next-rank').textContent = 'MAX';
+                document.getElementById('xp-progress-bar').style.width = '100%';
+            }
+        },
+        applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            this.state.settings.theme = theme;
+            document.getElementById('theme-toggle').checked = (theme === 'dark');
+            this.saveState();
+            if(this.state.currentPage === 'dashboard') {
+                this.renderWeeklyProgressChart();
+            }
+        },
+        showConfirmation(title, message, onConfirm) {
+            const modal = document.getElementById('confirmation-modal');
+            document.getElementById('confirmation-title').textContent = title;
+            document.getElementById('confirmation-message').textContent = message;
+            
+            const newConfirmBtn = document.getElementById('confirmation-confirm').cloneNode(true);
+            document.getElementById('confirmation-confirm').parentNode.replaceChild(newConfirmBtn, document.getElementById('confirmation-confirm'));
+            
+            newConfirmBtn.addEventListener('click', onConfirm);
+            document.getElementById('confirmation-cancel').addEventListener('click', () => this.closeModal('confirmation-modal'));
 
-            this.habitChartInstance = new Chart(ctx, {
+            modal.style.display = 'flex';
+        },
+
+        // Charting methods
+        renderWeeklyProgressChart() {
+            const ctx = document.getElementById('weekly-progress-chart')?.getContext('2d');
+            if (!ctx) return;
+
+            if (this.charts.weeklyProgress) {
+                this.charts.weeklyProgress.destroy();
+            }
+            
+            const today = new Date();
+            const labels = [];
+            const data = [];
+            for(let i=6; i>=0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                labels.push(date.toLocaleDateString('ar-EG', { weekday: 'short' }));
+                const dateString = date.toISOString().slice(0, 10);
+                const completedTasks = this.state.todos.filter(t => t.completed && t.completedAt?.slice(0, 10) === dateString).length;
+                data.push(completedTasks);
+            }
+
+            this.charts.weeklyProgress = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'أيام الاستمرارية',
+                        label: 'المهام المنجزة',
                         data: data,
-                        backgroundColor: getComputedStyle(document.body).getPropertyValue('--accent-color'),
-                        borderRadius: 6,
-                        borderColor: 'transparent'
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-soft-color'),
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'),
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        hoverBackgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color')
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: getComputedStyle(document.body).getPropertyValue('--card-bg-color'),
-                            titleColor: getComputedStyle(document.body).getPropertyValue('--text-color'),
-                            bodyColor: getComputedStyle(document.body).getPropertyValue('--text-secondary-color'),
-                            borderColor: getComputedStyle(document.body).getPropertyValue('--border-color'),
-                            borderWidth: 1
-                        }
-                    },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: getComputedStyle(document.body).getPropertyValue('--border-color') },
-                            ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary-color') }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary-color') }
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
                         }
                     }
                 }
             });
         },
+
+        // Pomodoro methods
+        openPomodoroModal(taskId) {
+            const task = this.findItem(taskId, 'todo');
+            if(!task || task.completed) return;
+            
+            this.pomodoro.taskId = taskId;
+            this.resetPomodoro(true);
+
+            document.getElementById('pomodoro-task-title').textContent = task.title;
+            const modal = document.getElementById('pomodoro-modal');
+            modal.style.display = 'flex';
+            anime({ targets: '#pomodoro-modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' });
+        },
+        updateTimerDisplay() {
+            const minutes = Math.floor(this.pomodoro.timeLeft / 60).toString().padStart(2, '0');
+            const seconds = (this.pomodoro.timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('pomodoro-timer-display').textContent = `${minutes}:${seconds}`;
+        },
+        startPomodoro() {
+            if(this.pomodoro.timer) clearInterval(this.pomodoro.timer);
+            this.pomodoro.isPaused = false;
+            document.getElementById('pomodoro-start').style.display = 'none';
+            document.getElementById('pomodoro-pause').style.display = 'inline-flex';
+
+            this.pomodoro.timer = setInterval(() => {
+                this.pomodoro.timeLeft--;
+                this.updateTimerDisplay();
+
+                if (this.pomodoro.timeLeft < 0) {
+                    clearInterval(this.pomodoro.timer);
+                    this.handlePomodoroCompletion();
+                }
+            }, 1000);
+        },
+        pausePomodoro() {
+            clearInterval(this.pomodoro.timer);
+            this.pomodoro.isPaused = true;
+            document.getElementById('pomodoro-start').style.display = 'inline-flex';
+            document.getElementById('pomodoro-pause').style.display = 'none';
+        },
+        resetPomodoro(isOpening = false) {
+            clearInterval(this.pomodoro.timer);
+            this.pomodoro.isPaused = true;
+            
+            const task = this.findItem(this.pomodoro.taskId, 'todo');
+            if(isOpening) { // reset to work session only when opening
+                 this.pomodoro.mode = 'work';
+                 this.pomodoro.timeLeft = this.pomodoro.initialTime = 25 * 60;
+                 document.getElementById('pomodoro-status').textContent = 'حان وقت التركيز!';
+            }
+           
+            this.updateTimerDisplay();
+            document.getElementById('pomodoro-start').style.display = 'inline-flex';
+            document.getElementById('pomodoro-pause').style.display = 'none';
+        },
+        handlePomodoroCompletion() {
+            if (this.pomodoro.mode === 'work') {
+                this.pomodoro.sessions++;
+                const task = this.findItem(this.pomodoro.taskId, 'todo');
+                if(task) {
+                    task.pomodoros_completed = (task.pomodoros_completed || 0) + 1;
+                    if(task.pomodoros_completed >= task.pomodoros_total) {
+                        task.completed = true;
+                        task.completedAt = new Date().toISOString();
+                    }
+                }
+                this.addXP(25);
+                
+                // Switch to break
+                if (this.pomodoro.sessions % 4 === 0) {
+                    this.pomodoro.mode = 'longBreak';
+                    this.pomodoro.timeLeft = this.pomodoro.initialTime = 15 * 60;
+                    document.getElementById('pomodoro-status').textContent = 'أحسنت! خذ استراحة طويلة.';
+                } else {
+                    this.pomodoro.mode = 'shortBreak';
+                    this.pomodoro.timeLeft = this.pomodoro.initialTime = 5 * 60;
+                    document.getElementById('pomodoro-status').textContent = 'رائع! استراحة قصيرة.';
+                }
+            } else { // Break finished
+                this.pomodoro.mode = 'work';
+                this.pomodoro.timeLeft = this.pomodoro.initialTime = 25 * 60;
+                document.getElementById('pomodoro-status').textContent = 'حان وقت التركيز!';
+            }
+
+            this.updateTimerDisplay();
+            document.getElementById('pomodoro-start').style.display = 'inline-flex';
+            document.getElementById('pomodoro-pause').style.display = 'none';
+            
+            new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3').play();
+            this.render(); // Re-render to update lists
+        },
         
-        // ... (rest of the app object, including other renderers and methods)
+        initPWA() {
+            // Placeholder for PWA initialization logic
+        },
+
     };
-    
-    // This is a placeholder for the full app object.
-    // In the final code, all methods from previous versions will be here.
-    // For brevity, only new and modified methods are shown in detail.
-    // The final immersive code will contain the complete, working script.
-    
-    // Dummy placeholders for other methods to avoid errors in this snippet
-    app.initPWA = app.initPWA || function() {};
-    app.renderDashboard = app.renderDashboard || function() {};
-    app.renderGoals = app.renderGoals || function() {};
-    app.renderJournal = app.renderJournal || function() {};
-    app.renderGalleryPage = app.renderGalleryPage || function() {};
-    app.renderGraph = app.renderGraph || function() {};
-    app.renderSettings = app.renderSettings || function() {};
-    app.renderTemplatesPage = app.renderTemplatesPage || function() {};
-    app.renderPropertiesPage = app.renderPropertiesPage || function() {};
-    // ... and so on for all other methods.
-    
-    // The final code will have the full implementation.
-    // This is just a conceptual structure.
-    
-    // The actual full code is in the immersive block.
-    
+
+    app.init();
 });
 </script>
 
