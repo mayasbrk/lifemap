@@ -62,226 +62,158 @@
         }
 
         /* --- Base Styles --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         html, body {
-            font-family: var(--font-family);
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color);
             transition: background-color var(--transition-speed), color var(--transition-speed);
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 16px; line-height: 1.6;
         }
-        
-        .container {
-            padding: 20px;
-            padding-bottom: 100px; /* Space for bottom nav */
-        }
-        
+        .container { padding: 20px; padding-bottom: 100px; }
         .page { display: none; }
         .page.active { display: block; }
 
-        h1 { font-size: 28px; font-weight: 700; margin-bottom: 25px; }
-        h2 { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
-
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px;
+        }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 0; }
+        
         /* --- Bottom Navigation Bar --- */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background-color: var(--card-bg-color);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            padding-top: 10px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-            z-index: 1000;
+            position: fixed; bottom: 0; left: 0; right: 0; height: 80px;
+            background-color: var(--card-bg-color); border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-around; align-items: flex-start;
+            padding-top: 10px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000;
         }
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            color: var(--text-secondary-color);
-            transition: color 0.2s;
-            position: relative;
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            color: var(--text-secondary-color); transition: color 0.2s; position: relative; width: 60px;
         }
         .nav-item.active { color: var(--accent-color); }
         .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
         .nav-item span { font-size: 12px; font-weight: 500; }
         .nav-indicator {
-            position: absolute;
-            bottom: -10px;
-            width: 24px;
-            height: 4px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
-            opacity: 0;
-            transform: scaleX(0.5);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            position: absolute; bottom: -10px; width: 24px; height: 4px;
+            background-color: var(--accent-color); border-radius: 2px; opacity: 0;
+            transform: scaleX(0.5); transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        .nav-item.active .nav-indicator {
-            opacity: 1;
-            transform: scaleX(1);
-        }
+        .nav-item.active .nav-indicator { opacity: 1; transform: scaleX(1); }
 
         /* --- UI Components --- */
         .card {
-            background-color: var(--card-bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
+            background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+            border-radius: var(--border-radius); padding: 20px; margin-bottom: 20px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -2px rgba(0,0,0,0.03);
         }
         .btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-family: var(--font-family);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all var(--transition-speed);
+            background-color: var(--accent-color); color: white; border: none; padding: 12px 20px;
+            border-radius: var(--border-radius); font-size: 16px; font-family: var(--font-family);
+            font-weight: 500; cursor: pointer; transition: all var(--transition-speed);
         }
         .btn:hover { background-color: var(--accent-hover-color); transform: translateY(-2px); }
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-        }
+        .btn-secondary { background-color: transparent; color: var(--text-color); border: 1px solid var(--border-color); }
         .btn-secondary:hover { background-color: var(--bg-color); }
-
+        .icon-btn {
+            background: none; border: none; cursor: pointer; color: var(--text-secondary-color);
+            padding: 8px; border-radius: 50%; transition: all 0.2s;
+        }
+        .icon-btn:hover { background-color: var(--border-color); color: var(--text-color); }
         .fab {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            font-size: 28px;
+            position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px;
+            border-radius: 50%; font-size: 28px;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            z-index: 999; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- Specific List Items --- */
-        .habit-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .habit-item:last-child { border-bottom: none; }
-        .habit-item .checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--text-secondary-color);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .habit-item.completed .checkbox {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: white;
-        }
-        .habit-item .content { flex-grow: 1; }
-        .habit-item .title { font-weight: 500; transition: color 0.2s; }
+        /* --- List Item Styles --- */
+        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+        .list-item:last-child { border-bottom: none; }
+        .habit-item .checkbox { width: 24px; height: 24px; border: 2px solid var(--text-secondary-color); border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .habit-item.completed .checkbox { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
+        .list-item .content { flex-grow: 1; min-width: 0; }
+        .list-item .title { font-weight: 500; transition: color 0.2s; }
         .habit-item.completed .title { text-decoration: line-through; color: var(--text-secondary-color); }
-        .habit-item .subtitle { font-size: 14px; color: var(--text-secondary-color); }
-        
-        .delete-btn {
-            background: none; border: none; color: var(--text-secondary-color);
-            cursor: pointer; opacity: 0.5; transition: all 0.2s;
-        }
+        .list-item .subtitle { font-size: 14px; color: var(--text-secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .delete-btn { background: none; border: none; color: var(--text-secondary-color); cursor: pointer; opacity: 0.5; transition: all 0.2s; }
         .delete-btn:hover { opacity: 1; color: #ef4444; transform: scale(1.1); }
-
-        /* --- Journal Entry & Linking --- */
-        .journal-entry { padding: 15px 0; border-bottom: 1px solid var(--border-color); }
-        .journal-entry:last-child { border-bottom: none; }
-        .linked-items-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .linked-item-tag {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary-color);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
         
+        /* --- Linking & Backlinks --- */
+        .rendered-link { background-color: var(--accent-color); color: white; padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+        .backlinks-container { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+        .backlinks-container h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-secondary-color); }
+        .backlink-item { display: block; background-color: var(--bg-color); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; cursor: pointer; transition: background-color 0.2s; }
+        .backlink-item:hover { background-color: var(--border-color); }
+
         /* --- Modal --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); display: none;
-            justify-content: center; align-items: center; z-index: 2000;
-        }
-        .modal-content {
-            background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius);
-            width: 90%; max-width: 450px;
-        }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 12px; border-radius: var(--border-radius);
-            border: 1px solid var(--border-color); background-color: var(--bg-color);
-            color: var(--text-color); font-family: var(--font-family); font-size: 15px;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-start; z-index: 2000; padding-top: 5vh; overflow-y: auto; }
+        .modal-content { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius); width: 90%; max-width: 500px; margin-bottom: 5vh; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: var(--border-radius); border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-family); font-size: 15px; }
+        .form-group textarea { line-height: 1.6; }
+        .form-group .hint { font-size: 12px; color: var(--text-secondary-color); margin-top: 5px; }
         .modal-actions { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
         
-        /* Link Modal Specifics */
-        #link-modal-list { max-height: 200px; overflow-y: auto; }
-        .link-item-option { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
-        .link-item-option:hover { background-color: var(--bg-color); }
-        .link-item-option input[type="checkbox"] { width: 18px; height: 18px; }
+        /* --- Search Modal --- */
+        #search-modal .modal-content { padding: 0; overflow: hidden; }
+        #search-input { width: 100%; border: none; background-color: transparent; font-size: 18px; padding: 20px; }
+        #search-input:focus { outline: none; }
+        #search-results { max-height: 60vh; overflow-y: auto; }
+        .search-result-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; cursor: pointer; border-top: 1px solid var(--border-color); }
+        .search-result-item:hover { background-color: var(--bg-color); }
+        .search-result-item .icon { font-size: 20px; }
+        .search-result-item .content .title { font-weight: 500; }
+        .search-result-item .content .snippet { font-size: 13px; color: var(--text-secondary-color); }
+        .search-result-item .content .snippet mark { background-color: var(--accent-color); color: white; padding: 1px 3px; border-radius: 3px; }
+
+        /* --- View Toggler --- */
+        .view-toggler { display: flex; gap: 5px; background-color: var(--bg-color); padding: 5px; border-radius: var(--border-radius); margin-bottom: 20px; }
+        .view-toggler button { flex: 1; background: none; border: none; padding: 8px; border-radius: 8px; cursor: pointer; font-family: var(--font-family); font-weight: 500; color: var(--text-secondary-color); transition: all 0.2s; }
+        .view-toggler button.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+        /* --- Kanban Board Styles --- */
+        .kanban-board { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
+        .kanban-column { flex: 0 0 280px; background-color: var(--bg-color); border-radius: var(--border-radius); padding: 15px; }
+        .kanban-column h3 { font-size: 16px; margin-bottom: 15px; }
+        .kanban-cards { min-height: 100px; }
+        .kanban-card { background-color: var(--card-bg-color); border-radius: 8px; padding: 15px; margin-bottom: 10px; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .kanban-card .title { font-weight: 500; }
+        .kanban-card .subtitle { font-size: 12px; color: var(--text-secondary-color); margin-top: 5px; }
+        .kanban-card.dragging { opacity: 0.5; }
+        .kanban-column.drag-over { background-color: var(--border-color); }
+
+        /* --- Calendar View --- */
+        .calendar-container { background-color: var(--card-bg-color); border-radius: var(--border-radius); padding: 20px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-header h3 { font-size: 18px; font-weight: 600; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .calendar-day-name { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-secondary-color); }
+        .calendar-day { position: relative; text-align: center; padding: 10px 5px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; }
+        .calendar-day.other-month { color: var(--text-secondary-color); opacity: 0.5; }
+        .calendar-day:not(.other-month):hover { background-color: var(--bg-color); }
+        .calendar-day.selected { background-color: var(--accent-color); color: white; }
+        .calendar-day .event-dot { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; }
+        .event-dot.goal { background-color: var(--accent-color); }
+        .event-dot.journal { background-color: #f97316; }
+        .calendar-day.selected .event-dot { background-color: white; }
+        #calendar-events-list { margin-top: 20px; }
+
+        /* --- Properties & Templates --- */
+        .properties-container { border-top: 1px solid var(--border-color); margin-top: 20px; padding-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .list-item-properties { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .property-tag { background-color: var(--bg-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--text-secondary-color); }
+        .property-tag strong { color: var(--text-color); }
+        .templates-container { border-top: 1px solid var(--border-color); margin-top: 20px; padding-top: 20px; }
+        .template-btn { display: block; width: 100%; text-align: right; background-color: var(--bg-color); border: 1px dashed var(--border-color); color: var(--text-secondary-color); padding: 15px; margin-bottom: 10px; border-radius: var(--border-radius); cursor: pointer; transition: all 0.2s; }
+        .template-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        #property-options-group textarea { height: 80px; font-size: 14px; }
 
         /* --- Graph View --- */
-        #graph-view-container {
-            width: 100%; height: 65vh; border: 1px solid var(--border-color);
-            border-radius: var(--border-radius); background-color: var(--card-bg-color);
-        }
+        #graph-view-container { width: 100%; height: 65vh; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--card-bg-color); }
 
-        /* --- Animations --- */
-        .animated-entry { animation: popIn 0.5s ease-out forwards; }
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
-        /* Confetti Canvas */
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
+        /* --- Animations & Misc --- */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
     </style>
 </head>
 <body>
@@ -289,61 +221,62 @@
 <div class="container">
     <!-- Pages -->
     <div id="dashboard" class="page active">
-        <h1 id="greeting"></h1>
+        <div class="page-header"><h1><span id="greeting"></span></h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
         <div class="card">
             <h2>🏆 الرتبة والتقدم</h2>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <div id="rank-name" style="font-size: 24px; font-weight: 600; color: var(--accent-color);"></div>
                 <div style="flex-grow: 1;">
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary-color); margin-bottom: 5px;">
-                        <span id="xp-current"></span>
-                        <span id="xp-next-rank"></span>
-                    </div>
-                    <div class="progress-bar" style="height: 8px; background-color: var(--border-color);">
-                        <div id="xp-progress-bar" class="progress-bar-inner" style="background-color: var(--accent-color);"></div>
-                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary-color); margin-bottom: 5px;"><span id="xp-current"></span><span id="xp-next-rank"></span></div>
+                    <div style="height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden;"><div id="xp-progress-bar" style="height: 100%; background-color: var(--accent-color); width: 0%; transition: width 0.5s ease;"></div></div>
                 </div>
             </div>
         </div>
-        <div class="card" id="ai-recommendation-card">
-            <h2>💡 توصية ذكية</h2>
-            <p id="ai-recommendation-text"></p>
-        </div>
+        <div class="card" id="ai-recommendation-card"><h2 class="h2">💡 توصية ذكية</h2><p id="ai-recommendation-text"></p></div>
+        <div class="card"><h2>🎯 أهدافك النشطة</h2><div id="dashboard-goals-list"></div></div>
+    </div>
+    <div id="habits" class="page">
+        <div class="page-header"><h1>العادات</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="card" id="habits-list"></div>
+    </div>
+    <div id="goals" class="page">
+        <div class="page-header"><h1>الأهداف</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="view-toggler" id="goals-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="board">لوحة</button><button data-view="calendar">تقويم</button></div>
+        <div id="goals-content"></div>
+    </div>
+    <div id="journal" class="page">
+        <div class="page-header"><h1>دفتر اليوميات</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="view-toggler" id="journal-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="calendar">تقويم</button></div>
+        <div id="journal-content"></div>
+    </div>
+    <div id="graph" class="page">
+        <div class="page-header"><h1>خريطة الحياة</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div id="graph-view-container"></div>
+    </div>
+    <div id="settings" class="page">
+        <div class="page-header"><h1>الإعدادات</h1></div>
         <div class="card">
-            <h2>🎯 أهدافك النشطة</h2>
-            <div id="dashboard-goals-list"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><label for="username-input">الاسم</label><input type="text" id="username-input" style="width: 50%; text-align: left; direction: ltr; border: none; background: transparent; font-size: 16px; color: var(--text-color);"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><span>الوضع الليلي</span><label class="theme-switch" style="position: relative; display: inline-block; width: 50px; height: 28px;"><input type="checkbox" id="theme-toggle" style="opacity: 0; width: 0; height: 0;"><span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px;"><span class="slider-knob" style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span></span></label></div>
+            <div style="padding: 15px 0; border-bottom: 1px solid var(--border-color);">
+                <button id="manage-properties-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">إدارة الخصائص</button>
+                <button id="manage-templates-btn" class="btn btn-secondary" style="width: 100%;">إدارة القوالب</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;"><span>إعادة تعيين كل البيانات</span><button id="reset-data-btn" class="btn" style="background-color: #ef4444;">إعادة تعيين</button></div>
         </div>
     </div>
-    <div id="habits" class="page"><h1>العادات</h1><div class="card" id="habits-list"></div></div>
-    <div id="goals" class="page"><h1>الأهداف</h1><div id="goals-list"></div></div>
-    <div id="journal" class="page"><h1>دفتر اليوميات</h1><div class="card" id="journal-entries-list"></div></div>
-    <div id="graph" class="page"><h1>خريطة الحياة</h1><div id="graph-view-container"></div></div>
-    <div id="settings" class="page">
-        <h1>الإعدادات</h1>
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);">
-                <label for="username-input">الاسم</label>
-                <input type="text" id="username-input" style="width: 50%; text-align: left; direction: ltr; border: none; background: transparent; font-size: 16px; color: var(--text-color);">
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);">
-                <span>الوضع الليلي</span>
-                <label class="theme-switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
-                    <input type="checkbox" id="theme-toggle" style="opacity: 0; width: 0; height: 0;">
-                    <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px;"><span class="slider-knob" style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span></span>
-                </label>
-            </div>
-             <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
-                <span>إعادة تعيين كل البيانات</span>
-                <button id="reset-data-btn" class="btn" style="background-color: #ef4444;">إعادة تعيين</button>
-            </div>
-        </div>
+    <div id="templates" class="page">
+        <div class="page-header"><h1>إدارة القوالب</h1><button class="icon-btn" data-action="open-settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+        <div class="card" id="templates-list-container"><div id="templates-list"></div><button id="add-template-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة قالب جديد</button></div>
+    </div>
+    <div id="properties" class="page">
+        <div class="page-header"><h1>إدارة الخصائص</h1><button class="icon-btn" data-action="open-settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+        <div class="card" id="properties-list-container"><div id="properties-list"></div><button id="add-property-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة خاصية جديدة</button></div>
     </div>
 </div>
 
 <!-- Bottom Navigation -->
-<nav class="bottom-nav">
-    <!-- Icons will be injected by JS -->
-</nav>
+<nav class="bottom-nav"></nav>
 
 <!-- FAB -->
 <button id="fab-add" class="btn fab">+</button>
@@ -351,211 +284,237 @@
 <!-- Modals -->
 <div id="modal" class="modal-overlay">
     <div class="modal-content">
+        <div id="templates-container" class="templates-container" style="display: none;"></div>
         <h3 id="modal-title"></h3>
         <form id="modal-form">
-            <input type="hidden" id="edit-id">
+            <input type="hidden" id="edit-id"><input type="hidden" id="edit-type">
             <div class="form-group" id="title-group"><label for="item-title">العنوان</label><input type="text" id="item-title" required></div>
-            <div class="form-group" id="description-group"><label for="item-description">الوصف</label><textarea id="item-description" rows="3"></textarea></div>
+            <div id="properties-container" class="properties-container"></div>
+            <div class="form-group" id="description-group"><label for="item-description">الوصف / المحتوى</label><textarea id="item-description" rows="4"></textarea><p class="hint">لإنشاء رابط، اكتب [[عنوان العنصر]]</p></div>
             <div class="form-group" id="goal-fields"><label for="goal-deadline">تاريخ الانتهاء</label><input type="date" id="goal-deadline"></div>
-            <div class="form-group" id="journal-fields">
-                <label>تقييم المزاج</label>
-                <select id="journal-mood">
-                    <option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option>
-                </select>
-            </div>
-            <div class="form-group" id="link-items-group"><button type="button" id="link-items-btn" class="btn btn-secondary">🔗 ربط بعناصر أخرى</button></div>
+            <div class="form-group" id="journal-fields"><label>تقييم المزاج</label><select id="journal-mood"><option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option></select></div>
+            <div id="backlinks-container" class="backlinks-container" style="display: none;"></div>
             <div class="modal-actions"><button type="button" id="modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ</button></div>
         </form>
     </div>
 </div>
-
-<div id="link-modal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>ربط بعناصر</h3>
-        <div id="link-modal-list"></div>
-        <div class="modal-actions"><button type="button" id="link-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="button" id="link-modal-save" class="btn">تأكيد</button></div>
-    </div>
-</div>
-
-<div id="suggestion-modal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>💡 اقتراح ذكي</h3>
-        <p id="suggestion-text">لاحظنا أنك ذكرت كلمات متعلقة ببعض أهدافك/عاداتك. هل تود ربط هذا الإدخال؟</p>
-        <div id="suggestion-links" style="margin: 15px 0; background: var(--bg-color); padding: 10px; border-radius: 8px;"></div>
-        <div class="modal-actions"><button type="button" id="suggestion-ignore" class="btn btn-secondary">تجاهل</button><button type="button" id="suggestion-confirm" class="btn">نعم، اربط</button></div>
-    </div>
-</div>
+<div id="search-modal" class="modal-overlay"><div class="modal-content search-modal-content"><input type="search" id="search-input" placeholder="ابحث في كل شيء..." autocomplete="off"><div id="search-results"></div></div></div>
+<div id="templates-modal" class="modal-overlay"><div id="templates-modal-content" class="modal-content"><h3 id="templates-modal-title"></h3><form id="templates-modal-form"><input type="hidden" id="template-edit-id"><div class="form-group" id="template-type-group"><label for="template-type">نوع القالب</label><select id="template-type"><option value="goal">هدف</option><option value="journal">يومية</option></select></div><div class="form-group" id="template-title-group"><label for="template-title">عنوان القالب</label><input type="text" id="template-title" required></div><div class="form-group" id="template-description-group"><label for="template-description">محتوى القالب</label><textarea id="template-description" rows="4"></textarea></div><div class="form-group" id="template-mood-group"><label>المزاج الافتراضي</label><select id="template-mood"><option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option></select></div><div class="modal-actions"><button type="button" id="template-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ القالب</button></div></form></div></div>
+<div id="properties-modal" class="modal-overlay"><div class="modal-content"><h3 id="properties-modal-title"></h3><form id="properties-modal-form"><input type="hidden" id="property-edit-id"><div class="form-group"><label for="property-name">اسم الخاصية</label><input type="text" id="property-name" required></div><div class="form-group"><label for="property-type">نوع الخاصية</label><select id="property-type"><option value="text">نص</option><option value="select">اختيار</option></select></div><div class="form-group" id="property-options-group" style="display:none;"><label for="property-options">خيارات (افصل بينها بفاصلة)</label><textarea id="property-options" rows="3"></textarea></div><div class="modal-actions"><button type="button" id="property-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ الخاصية</button></div></form></div></div>
 
 <!-- Confetti Canvas -->
 <canvas id="confetti-canvas"></canvas>
 
 <script>
-// --- LifeMap v3 ---
 document.addEventListener('DOMContentLoaded', () => {
-    // The full JS logic will be placed here.
-    // It's extensive, so I'll provide the complete, tested script.
     const app = {
-        // ... (The entire JS logic from the thought process will be implemented here)
-        state: {
-            user: { name: 'مستكشف', xp: 0 },
-            habits: [],
-            goals: [],
-            journalEntries: [],
-            settings: { theme: 'light', lastOpened: new Date().toISOString().slice(0, 10) },
-            currentPage: 'dashboard',
-            tempLinks: new Set(),
-        },
-
+        state: {},
+        calendarState: { goals: { date: new Date() }, journal: { date: new Date() } },
         navItems: [
             { id: 'dashboard', label: 'الرئيسية', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" /></svg>` },
             { id: 'habits', label: 'العادات', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691v-2.985a2.25 2.25 0 00-2.25-2.25h-2.985a2.25 2.25 0 00-2.25 2.25v2.985" /></svg>` },
-            { id: 'goals', label: 'الأهداف', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 19.875v-6.75zM3 8.625c0-.621.504-1.125 1.125-1.125h15.75c.621 0 1.125.504 1.125 1.125v.375c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 9V8.625z" /></svg>` },
+            { id: 'goals', label: 'الأهداف', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 19.875v-6.75zM3 8.625c0-.621.504-1.125 1.125-1.25h15.75c.621 0 1.125.504 1.125 1.125v.375c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 9V8.625z" /></svg>` },
             { id: 'journal', label: 'اليوميات', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>` },
             { id: 'graph', label: 'الخريطة', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>` },
         ],
-        
-        ranks: [
-            { name: 'مبتدئ', xp: 0 }, { name: 'منظم', xp: 100 }, { name: 'مثابر', xp: 300 },
-            { name: 'مُنجز', xp: 700 }, { name: 'خبير', xp: 1500 }, { name: 'سيد الحياة', xp: 3000 },
-        ],
-
-        init() {
-            this.loadState();
-            this.setupEventListeners();
-            this.checkDate();
-            this.applyTheme(this.state.settings.theme);
-            this.renderNav();
-            this.navigateTo(this.state.currentPage, true);
-        },
-
+        ranks: [ { name: 'مبتدئ', xp: 0 }, { name: 'منظم', xp: 100 }, { name: 'مثابر', xp: 300 }, { name: 'مُنجز', xp: 700 }, { name: 'خبير', xp: 1500 }, { name: 'سيد الحياة', xp: 3000 } ],
+        init() { this.loadState(); this.setupEventListeners(); this.checkDate(); this.applyTheme(this.state.settings.theme); this.renderNav(); this.navigateTo(this.state.currentPage || 'dashboard', true); },
         loadState() {
             const savedState = localStorage.getItem('lifeMapState');
             if (savedState) {
                 this.state = JSON.parse(savedState);
-            } else {
-                this.loadInitialData();
-            }
+                // Migration for old data
+                this.state.goals.forEach(g => { if (!g.status) g.status = 'todo'; if (!g.properties) g.properties = {}; });
+                if (!this.state.settings.goalsView) this.state.settings.goalsView = 'list';
+                if (!this.state.settings.journalView) this.state.settings.journalView = 'list';
+                if (!this.state.templates) this.state.templates = [];
+                if (!this.state.propertyDefinitions) this.state.propertyDefinitions = [];
+            } else { this.resetState(); }
         },
-        
-        loadInitialData() {
-            this.state.habits = [
-                { id: 'h1', title: 'القراءة لمدة 20 دقيقة', completedToday: true, streak: 5, createdAt: new Date().toISOString() },
-                { id: 'h2', title: 'شرب 2 لتر ماء', completedToday: false, streak: 0, createdAt: new Date().toISOString() },
-            ];
-            this.state.goals = [
-                { id: 'g1', title: 'إطلاق النسخة الأولى من LifeMap', description: 'إنهاء البرمجة والنشر على GitHub', deadline: '', progress: 75, createdAt: new Date().toISOString(), linkedItems: [] },
-                { id: 'g2', title: 'قراءة 12 كتابًا هذا العام', description: '', deadline: '', progress: 25, createdAt: new Date().toISOString(), linkedItems: [] },
-            ];
-            this.state.journalEntries = [
-                { id: 'j1', content: 'شعور رائع اليوم بعد إنجاز جزء كبير من مشروع LifeMap. قمت بربط هذه اليومية بالهدف الرئيسي.', mood: 5, createdAt: new Date().toISOString(), linkedItems: ['g1'] }
-            ];
+        resetState() {
+            this.state = {
+                user: { name: 'مستكشف', xp: 0 },
+                habits: [ { id: 'h1', title: 'القراءة لمدة 20 دقيقة', completedToday: false, streak: 5, createdAt: new Date().toISOString() } ],
+                goals: [ { id: 'g1', title: 'إطلاق النسخة الأولى من LifeMap', description: 'إنهاء البرمجة والنشر.', deadline: '2025-07-15', progress: 75, createdAt: new Date().toISOString(), linkedItems: [], status: 'inprogress', properties: { 'الأولوية': 'عالي' } } ],
+                journalEntries: [ { id: 'j1', content: 'شعور رائع اليوم بعد إنجاز جزء كبير من مشروع [[إطلاق النسخة الأولى من LifeMap]].', mood: 5, createdAt: new Date().toISOString(), linkedItems: ['g1'] } ],
+                templates: [ { id: 't1', title: 'مراجعة أسبوعية', type: 'journal', data: { title: 'مراجعة الأسبوع', content: "## إنجازات هذا الأسبوع\n\n- \n\n## تحديات واجهتني\n\n- \n\n## خطة الأسبوع القادم\n\n- " } } ],
+                propertyDefinitions: [ { id: 'pd1', name: 'الأولوية', type: 'select', options: ['عالي', 'متوسط', 'منخفض'] } ],
+                settings: { theme: 'light', lastOpened: new Date().toISOString().slice(0, 10), goalsView: 'list', journalView: 'list' },
+                currentPage: 'dashboard',
+            };
             this.saveState();
         },
-
         saveState() { localStorage.setItem('lifeMapState', JSON.stringify(this.state)); },
-
-        renderNav() {
-            const navContainer = document.querySelector('.bottom-nav');
-            navContainer.innerHTML = this.navItems.map(item => `
-                <div class="nav-item ${this.state.currentPage === item.id ? 'active' : ''}" data-page="${item.id}">
-                    ${item.icon}
-                    <span>${item.label}</span>
-                    <div class="nav-indicator"></div>
-                </div>
-            `).join('');
-        },
-
+        checkDate() { const today = new Date().toISOString().slice(0, 10); if (this.state.settings.lastOpened !== today) { this.state.habits.forEach(h => h.completedToday = false); this.state.settings.lastOpened = today; this.saveState(); } },
         navigateTo(pageId, isInitial = false) {
-            const oldPage = document.querySelector('.page.active');
-            if (oldPage) oldPage.classList.remove('active');
-            
+            document.querySelector('.page.active')?.classList.remove('active');
             this.state.currentPage = pageId;
             const newPage = document.getElementById(pageId);
-            newPage.classList.add('active');
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.toggle('active', item.dataset.page === pageId);
-            });
-            
-            const fab = document.getElementById('fab-add');
-            fab.style.display = ['dashboard', 'settings', 'graph'].includes(pageId) ? 'none' : 'flex';
-
-            if (!isInitial) {
-                 anime({
-                    targets: newPage,
-                    opacity: [0, 1],
-                    translateY: [20, 0],
-                    duration: 500,
-                    easing: 'easeOutCubic'
-                });
-            }
-            
+            if(newPage) newPage.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === pageId));
+            document.getElementById('fab-add').style.display = ['dashboard', 'settings', 'graph', 'templates', 'properties'].includes(pageId) ? 'none' : 'flex';
+            if (!isInitial && newPage) { anime({ targets: newPage, opacity: [0, 1], translateY: [20, 0], duration: 500, easing: 'easeOutCubic' }); }
             this.render();
         },
-        
         render() {
-            // Render functions for each page
-            // ... (renderDashboard, renderHabits, etc.)
-            // The full JS from the thought process will be implemented here.
-            // This is just a skeleton for brevity.
-            const renderMap = {
-                'dashboard': this.renderDashboard,
-                'habits': this.renderHabits,
-                'goals': this.renderGoals,
-                'journal': this.renderJournal,
-                'graph': this.renderGraph,
-                'settings': this.renderSettings,
-            };
-            renderMap[this.state.currentPage].call(this);
+            const renderMap = { 'dashboard': this.renderDashboard, 'habits': this.renderHabits, 'goals': this.renderGoals, 'journal': this.renderJournal, 'graph': this.renderGraph, 'settings': this.renderSettings, 'templates': this.renderTemplatesPage, 'properties': this.renderPropertiesPage };
+            renderMap[this.state.currentPage]?.call(this);
             this.saveState();
         },
-        
-        // --- All other JS functions (renderDashboard, saveItem, etc.) go here ---
-        // ...
+        renderNav() { const navContainer = document.querySelector('.bottom-nav'); navContainer.innerHTML = this.navItems.map(item => `<div class="nav-item ${this.state.currentPage === item.id ? 'active' : ''}" data-page="${item.id}">${item.icon}<span>${item.label}</span><div class="nav-indicator"></div></div>`).join(''); },
+        renderDashboard() { document.getElementById('greeting').textContent = `أهلاً، ${this.state.user.name || 'مستكشف'}!`; this.updateRank(); document.getElementById('ai-recommendation-text').textContent = "صنّف أهدافك باستخدام الخصائص المخصصة الجديدة!"; const goalsList = document.getElementById('dashboard-goals-list'); const activeGoals = this.state.goals.filter(g => g.status !== 'done').slice(0, 3); goalsList.innerHTML = activeGoals.length === 0 ? `<p style="color: var(--text-secondary-color);">لا توجد أهداف نشطة. أضف هدفًا جديدًا!</p>` : activeGoals.map(goal => this.createListItem(goal, 'goal').outerHTML).join(''); },
+        renderHabits() { const list = document.getElementById('habits-list'); list.innerHTML = this.state.habits.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ ببناء عادات إيجابية.</div>` : ''; this.state.habits.forEach(habit => list.appendChild(this.createListItem(habit, 'habit'))); this.animateListItems('.habit-item'); },
+        renderGoals() { const view = this.state.settings.goalsView; const toggler = document.getElementById('goals-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="board"]`).classList.toggle('active', view === 'board'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderGoalsList(); else if (view === 'board') this.renderGoalsBoard(); else this.renderCalendarView('goals'); },
+        renderJournal() { const view = this.state.settings.journalView; const toggler = document.getElementById('journal-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderJournalList(); else this.renderCalendarView('journal'); },
+        renderGoalsList() { const container = document.getElementById('goals-content'); container.innerHTML = `<div class="card" id="goals-list"></div>`; const list = document.getElementById('goals-list'); list.innerHTML = this.state.goals.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">خطط لمستقبلك عبر إضافة أهداف جديدة.</div>` : ''; this.state.goals.forEach(goal => list.appendChild(this.createListItem(goal, 'goal'))); this.animateListItems('.goal-item'); },
+        renderJournalList() { const container = document.getElementById('journal-content'); container.innerHTML = `<div class="card" id="journal-entries-list"></div>`; const list = document.getElementById('journal-entries-list'); list.innerHTML = this.state.journalEntries.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">دوّن أفكارك ومشاعرك اليومية.</div>` : ''; this.state.journalEntries.forEach(entry => list.appendChild(this.createListItem(entry, 'journal'))); this.animateListItems('.journal-entry'); },
+        renderGoalsBoard() { const container = document.getElementById('goals-content'); container.innerHTML = `<div class="kanban-board"><div class="kanban-column" data-status="todo"><h3>أفكار</h3><div class="kanban-cards"></div></div><div class="kanban-column" data-status="inprogress"><h3>قيد التنفيذ</h3><div class="kanban-cards"></div></div><div class="kanban-column" data-status="done"><h3>مكتمل</h3><div class="kanban-cards"></div></div></div>`; this.state.goals.forEach(goal => { const column = container.querySelector(`.kanban-column[data-status="${goal.status || 'todo'}"] .kanban-cards`); if (column) column.appendChild(this.createKanbanCard(goal)); }); this.setupDragAndDrop(); },
+        renderSettings() { document.getElementById('username-input').value = this.state.user.name; document.getElementById('theme-toggle').checked = this.state.settings.theme === 'dark'; },
+        renderGraph() { const container = document.getElementById('graph-view-container'); const nodes = new vis.DataSet([...this.state.habits.map(i => ({ id: i.id, label: i.title, group: 'habits' })), ...this.state.goals.map(i => ({ id: i.id, label: i.title, group: 'goals' })), ...this.state.journalEntries.map(i => ({ id: i.id, label: new Date(i.createdAt).toLocaleDateString('ar-EG'), group: 'journal' })),]); const edges = new vis.DataSet([...this.state.goals, ...this.state.journalEntries].flatMap(item => (item.linkedItems || []).map(linkId => ({ from: item.id, to: linkId })))); const data = { nodes, edges }; const options = { layout: { hierarchical: false }, groups: { habits: { color: { background: '#22c55e' }, font: { color: 'white' } }, goals: { color: { background: '#3b82f6' }, font: { color: 'white' } }, journal: { color: { background: '#f97316' }, font: { color: 'white' } }, }, edges: { color: { color: getComputedStyle(document.body).getPropertyValue('--border-color'), highlight: getComputedStyle(document.body).getPropertyValue('--accent-color') } }, physics: { stabilization: true }, interaction: { hover: true }, }; new vis.Network(container, data, options); },
+        createListItem(item, type) {
+            const div = document.createElement('div');
+            div.className = `list-item ${type}-item`;
+            div.dataset.id = item.id;
+            div.dataset.type = type;
+            let contentHTML = '';
+            switch (type) {
+                case 'habit': div.classList.toggle('completed', item.completedToday); contentHTML = `<div class="checkbox" data-action="toggle-habit">${item.completedToday ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}</div><div class="content"><div class="title">${item.title}</div><div class="subtitle">الاستمرارية: ${item.streak} أيام</div></div>`; break;
+                case 'goal': contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="list-item-properties">${this.renderProperties(item.properties)}</div></div>`; break;
+                case 'journal': const moodEmojis = { 1: '😞', 2: '😕', 3: '😐', 4: '😊', 5: '😃' }; contentHTML = `<div class="content"><div class="title">${moodEmojis[item.mood] || ''} ${new Date(item.createdAt).toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div><div class="subtitle">${this.renderTextWithLinks(item.content || '')}</div></div>`; break;
+                case 'template': contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="subtitle">قالب ${this.getItemTypeName(item.type)}</div></div>`; break;
+                case 'propertyDefinition': contentHTML = `<div class="content"><div class="title">${item.name}</div><div class="subtitle">النوع: ${item.type}</div></div>`; break;
+            }
+            div.innerHTML = contentHTML + `<button class="delete-btn" data-action="delete-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
+            return div;
+        },
+        createKanbanCard(goal) { const card = document.createElement('div'); card.className = 'kanban-card'; card.dataset.id = goal.id; card.draggable = true; card.innerHTML = `<div class="title">${goal.title}</div><div class="list-item-properties">${this.renderProperties(goal.properties)}</div>`; return card; },
+        animateListItems(selector) { anime({ targets: selector, opacity: [0, 1], translateY: [20, 0], delay: anime.stagger(100, { start: 100 }), easing: 'easeOutCubic' }); },
+        setupEventListeners() {
+            document.querySelector('.bottom-nav').addEventListener('click', e => { const navItem = e.target.closest('.nav-item'); if (navItem) this.navigateTo(navItem.dataset.page); });
+            document.getElementById('fab-add').addEventListener('click', () => this.openModal());
+            document.getElementById('modal-form').addEventListener('submit', e => { e.preventDefault(); this.saveItem(); });
+            document.getElementById('modal-cancel').addEventListener('click', () => this.closeModal('modal'));
+            document.getElementById('username-input').addEventListener('change', e => { this.state.user.name = e.target.value; this.saveState(); this.renderDashboard(); });
+            document.getElementById('theme-toggle').addEventListener('change', e => { this.applyTheme(e.target.checked ? 'dark' : 'light'); });
+            document.getElementById('reset-data-btn').addEventListener('click', () => { if (confirm('هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.')) { this.resetState(); this.render(); } });
+            document.querySelector('.container').addEventListener('click', e => {
+                const actionTarget = e.target.closest('[data-action]');
+                if (actionTarget) {
+                    const action = actionTarget.dataset.action;
+                    const id = e.target.closest('[data-id]')?.dataset.id;
+                    let type = e.target.closest('[data-type]')?.dataset.type;
+                    if (action === 'open-search') { this.openSearch(); }
+                    else if (action === 'toggle-habit' && id) { this.toggleHabit(id); }
+                    else if (action === 'delete-item' && id) { if(!type) type = this.getItemTypeById(id); this.deleteItem(id, type); }
+                    else if (action === 'open-settings') { this.navigateTo('settings'); }
+                    return;
+                }
+                const listItem = e.target.closest('.list-item, .kanban-card');
+                if (listItem?.dataset.id) { const type = this.getItemTypeById(listItem.dataset.id); if (type !== 'habit') this.openModal(listItem.dataset.id, type); }
+            });
+            document.getElementById('backlinks-container').addEventListener('click', e => { const backlink = e.target.closest('.backlink-item'); if(backlink) { this.closeModal('modal'); setTimeout(() => { this.navigateTo(backlink.dataset.type + 's'); this.openModal(backlink.dataset.id, backlink.dataset.type); }, 350); } });
+            document.getElementById('goals-view-toggler').addEventListener('click', e => { const button = e.target.closest('button'); if (button) { this.state.settings.goalsView = button.dataset.view; this.renderGoals(); this.saveState(); } });
+            document.getElementById('journal-view-toggler').addEventListener('click', e => { const button = e.target.closest('button'); if (button) { this.state.settings.journalView = button.dataset.view; this.renderJournal(); this.saveState(); } });
+            const searchModal = document.getElementById('search-modal');
+            const searchInput = document.getElementById('search-input');
+            searchModal.addEventListener('click', (e) => { if (e.target === searchModal) this.closeModal('search-modal'); });
+            searchInput.addEventListener('input', () => this.performSearch(searchInput.value));
+            document.getElementById('search-results').addEventListener('click', e => { const resultItem = e.target.closest('.search-result-item'); if (resultItem) { const { id, type } = resultItem.dataset; this.closeModal('search-modal'); setTimeout(() => { this.navigateTo(type + 's'); this.openModal(id, type); }, 350); } });
+            document.getElementById('manage-templates-btn').addEventListener('click', () => this.navigateTo('templates'));
+            document.getElementById('add-template-btn').addEventListener('click', () => this.openTemplateModal());
+            document.getElementById('templates-modal-form').addEventListener('submit', e => { e.preventDefault(); this.saveTemplate(); });
+            document.getElementById('template-modal-cancel').addEventListener('click', () => this.closeModal('templates-modal'));
+            document.getElementById('template-type').addEventListener('change', e => this.toggleTemplateFields(e.target.value));
+            document.getElementById('templates-list').addEventListener('click', e => { const item = e.target.closest('.list-item'); if (item && !e.target.closest('.delete-btn')) this.openTemplateModal(item.dataset.id); });
+            document.getElementById('manage-properties-btn').addEventListener('click', () => this.navigateTo('properties'));
+            document.getElementById('add-property-btn').addEventListener('click', () => this.openPropertyModal());
+            document.getElementById('properties-modal-form').addEventListener('submit', e => { e.preventDefault(); this.savePropertyDefinition(); });
+            document.getElementById('property-modal-cancel').addEventListener('click', () => this.closeModal('properties-modal'));
+            document.getElementById('property-type').addEventListener('change', e => { document.getElementById('property-options-group').style.display = e.target.value === 'select' ? 'block' : 'none'; });
+            document.getElementById('properties-list').addEventListener('click', e => { const item = e.target.closest('.list-item'); if (item && !e.target.closest('.delete-btn')) this.openPropertyModal(item.dataset.id); });
+        },
+        setupDragAndDrop() { const cards = document.querySelectorAll('.kanban-card'); const columns = document.querySelectorAll('.kanban-column'); cards.forEach(card => { card.addEventListener('dragstart', () => card.classList.add('dragging')); card.addEventListener('dragend', () => card.classList.remove('dragging')); }); columns.forEach(column => { column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); }); column.addEventListener('dragleave', () => column.classList.remove('drag-over')); column.addEventListener('drop', e => { e.preventDefault(); column.classList.remove('drag-over'); const draggingCard = document.querySelector('.kanban-card.dragging'); if (draggingCard) { column.querySelector('.kanban-cards').appendChild(draggingCard); this.updateGoalStatus(draggingCard.dataset.id, column.dataset.status); } }); }); },
+        openModal(id = null, type = null) {
+            const modal = document.getElementById('modal');
+            const form = document.getElementById('modal-form');
+            form.reset();
+            const currentType = type || this.state.currentPage.slice(0, -1);
+            const templatesContainer = document.getElementById('templates-container');
+            const relevantTemplates = this.state.templates.filter(t => t.type === currentType);
+            if (!id && relevantTemplates.length > 0) {
+                templatesContainer.style.display = 'block';
+                templatesContainer.innerHTML = '<h4>استخدام قالب:</h4>' + relevantTemplates.map(t => `<button type="button" class="template-btn" data-template-id="${t.id}">${t.title}</button>`).join('');
+                templatesContainer.querySelectorAll('.template-btn').forEach(btn => btn.addEventListener('click', e => this.applyTemplate(e.target.dataset.templateId)));
+            } else { templatesContainer.style.display = 'none'; }
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-type').value = currentType;
+            document.getElementById('description-group').style.display = ['goal', 'journal'].includes(currentType) ? 'block' : 'none';
+            document.getElementById('goal-fields').style.display = currentType === 'goal' ? 'block' : 'none';
+            document.getElementById('journal-fields').style.display = currentType === 'journal' ? 'block' : 'none';
+            const backlinksContainer = document.getElementById('backlinks-container');
+            backlinksContainer.style.display = 'none';
+            backlinksContainer.innerHTML = '';
+            
+            const propertiesContainer = document.getElementById('properties-container');
+            propertiesContainer.innerHTML = '';
+            if (currentType === 'goal') {
+                this.renderPropertyInputs(propertiesContainer, id ? this.findItem(id, 'goal').properties : {});
+            }
+
+            if (id) {
+                const item = this.findItem(id, currentType);
+                document.getElementById('modal-title').textContent = `تعديل ${this.getItemTypeName(currentType)}`;
+                document.getElementById('item-title').value = item.title || (item.mood ? '' : 'بدون عنوان');
+                document.getElementById('item-description').value = item.description || item.content || '';
+                if (currentType === 'goal') document.getElementById('goal-deadline').value = item.deadline || '';
+                if (currentType === 'journal') document.getElementById('journal-mood').value = item.mood || 3;
+                this.renderBacklinks(id, backlinksContainer);
+            } else { document.getElementById('modal-title').textContent = `إضافة ${this.getItemTypeName(currentType)}`; }
+            modal.style.display = 'flex';
+            anime({ targets: '#modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' });
+        },
+        closeModal(modalId) { const modal = document.getElementById(modalId); if (!modal) return; anime({ targets: `#${modalId} .modal-content`, opacity: [1, 0], scale: [1, 0.9], duration: 300, easing: 'easeInCubic', complete: () => modal.style.display = 'none' }); },
+        saveItem() { const id = document.getElementById('edit-id').value; const type = document.getElementById('edit-type').value; const title = document.getElementById('item-title').value; const description = document.getElementById('item-description').value; const linkedItems = new Set(); if (description) { const linkRegex = /\[\[(.*?)\]\]/g; let match; while((match = linkRegex.exec(description)) !== null) { const foundItem = this.findItemByTitle(match[1]); if (foundItem) linkedItems.add(foundItem.id); } } 
+            const itemData = { title: title, description: ['goal'].includes(type) ? description : undefined, content: ['journal'].includes(type) ? description : undefined, deadline: ['goal'].includes(type) ? document.getElementById('goal-deadline').value : undefined, mood: ['journal'].includes(type) ? document.getElementById('journal-mood').value : undefined, linkedItems: Array.from(linkedItems) };
+            if (type === 'goal') {
+                itemData.properties = this.getPropertyValuesFromForm();
+            }
+            if (id) { const collection = this.state[type + 's']; const itemIndex = collection.findIndex(i => i.id === id); if (itemIndex > -1) collection[itemIndex] = { ...collection[itemIndex], ...itemData }; } 
+            else { const newItem = { id: type.charAt(0) + Date.now(), createdAt: new Date().toISOString(), ...itemData }; if (type === 'habit') { newItem.streak = 0; newItem.completedToday = false; } if (type === 'goal') { newItem.progress = 0; newItem.status = 'todo'; if(!newItem.properties) newItem.properties = {}; } this.state[type + 's'].push(newItem); } 
+            this.closeModal('modal'); this.render(); 
+        },
+        deleteItem(id, type) { if (confirm(`هل أنت متأكد من حذف هذا العنصر؟`)) { if (type === 'template') { this.state.templates = this.state.templates.filter(item => item.id !== id); } else if (type === 'propertyDefinition') { this.state.propertyDefinitions = this.state.propertyDefinitions.filter(item => item.id !== id); } else { this.state[type + 's'] = this.state[type + 's'].filter(item => item.id !== id); } this.render(); } },
+        toggleHabit(id) { const habit = this.findItem(id, 'habit'); if (!habit) return; habit.completedToday = !habit.completedToday; if (habit.completedToday) { habit.streak++; this.addXP(10); this.triggerConfetti(); } else { habit.streak--; this.addXP(-10); } this.render(); },
+        updateGoalStatus(goalId, newStatus) { const goal = this.findItem(goalId, 'goal'); if (goal) { goal.status = newStatus; if (newStatus === 'done') goal.progress = 100; else if (newStatus === 'todo') goal.progress = 0; else if (newStatus === 'inprogress' && (goal.progress === 0 || goal.progress === 100)) goal.progress = 10; this.saveState(); this.renderGoalsBoard(); } },
+        openSearch() { const modal = document.getElementById('search-modal'); modal.style.display = 'flex'; document.getElementById('search-input').value = ''; document.getElementById('search-results').innerHTML = ''; anime({ targets: '#search-modal .modal-content', opacity: [0, 1], translateY: [-20, 0], duration: 300, easing: 'easeOutCubic' }); document.getElementById('search-input').focus(); },
+        performSearch(query) { const resultsContainer = document.getElementById('search-results'); if (!query || query.length < 2) { resultsContainer.innerHTML = ''; return; } const lowerCaseQuery = query.toLowerCase(); const allItems = [ ...this.state.habits.map(i => ({...i, type: 'habit'})), ...this.state.goals.map(i => ({...i, type: 'goal'})), ...this.state.journalEntries.map(i => ({...i, type: 'journal'})) ]; const results = allItems.filter(item => { const title = item.title || ''; const content = item.description || item.content || ''; const propertiesString = item.properties ? Object.values(item.properties).join(' ') : ''; return title.toLowerCase().includes(lowerCaseQuery) || content.toLowerCase().includes(lowerCaseQuery) || propertiesString.toLowerCase().includes(lowerCaseQuery); }); this.renderSearchResults(results, lowerCaseQuery); },
+        renderSearchResults(results, query) { const resultsContainer = document.getElementById('search-results'); if (results.length === 0) { resultsContainer.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-secondary-color);">لا توجد نتائج.</div>`; return; } resultsContainer.innerHTML = results.map(item => { const title = item.title || `يومية ${new Date(item.createdAt).toLocaleDateString()}`; const content = item.description || item.content || ''; const snippetIndex = content.toLowerCase().indexOf(query); let snippet = snippetIndex > -1 ? content.substring(Math.max(0, snippetIndex - 20), snippetIndex + 40) : content.substring(0, 60); snippet = snippet.replace(new RegExp(query, 'gi'), (match) => `<mark>${match}</mark>`); return ` <div class="search-result-item" data-id="${item.id}" data-type="${item.type}"> <div class="icon">${this.getItemIcon(item.type)}</div> <div class="content"> <div class="title">${title}</div> <div class="snippet">${snippet ? '...' + snippet + '...' : ''}</div> </div> </div> `; }).join(''); },
+        renderTextWithLinks(text) { return text ? text.replace(/\[\[(.*?)\]\]/g, '<span class="rendered-link">$1</span>') : ''; },
+        renderBacklinks(itemId, container) { const allItems = [...this.state.goals, ...this.state.journalEntries, ...this.state.habits]; const backlinks = allItems.filter(item => item.linkedItems?.includes(itemId)); if (backlinks.length > 0) { container.style.display = 'block'; let html = `<h4>الروابط الواردة</h4>`; backlinks.forEach(link => { const type = this.getItemTypeById(link.id); html += `<div class="backlink-item" data-id="${link.id}" data-type="${type}">${this.getItemIcon(type)} ${link.title || `يومية ${new Date(link.createdAt).toLocaleDateString()}`}</div>`; }); container.innerHTML = html; } },
+        findItem(id, type) { const collectionName = type === 'propertyDefinition' ? 'propertyDefinitions' : type + 's'; return this.state[collectionName]?.find(i => i.id === id); },
+        findItemByTitle(title) { return [...this.state.habits, ...this.state.goals, ...this.state.journalEntries].find(item => item.title?.toLowerCase() === title.toLowerCase()); },
+        getItemTypeById(id) { if (id.startsWith('h')) return 'habit'; if (id.startsWith('g')) return 'goal'; if (id.startsWith('j')) return 'journal'; if (id.startsWith('t')) return 'template'; if (id.startsWith('pd')) return 'propertyDefinition'; return null; },
+        getItemTypeName(type) { return ({ 'habit': 'عادة', 'goal': 'هدف', 'journal': 'يومية', 'template': 'قالب', 'propertyDefinition': 'خاصية' })[type] || 'عنصر'; },
+        getItemIcon(type) { return ({ 'habit': '🔁', 'goal': '🎯', 'journal': '✍️', 'template': '📋', 'propertyDefinition': '🔧' })[type] || '🔗'; },
+        addXP(amount) { this.state.user.xp += amount; this.updateRank(); },
+        updateRank() { const currentXP = this.state.user.xp; const currentRank = this.ranks.filter(r => r.xp <= currentXP).pop() || this.ranks[0]; const nextRank = this.ranks.find(r => r.xp > currentXP); document.getElementById('rank-name').textContent = currentRank.name; document.getElementById('xp-current').textContent = `${currentXP} XP`; if (nextRank) { const progress = ((currentXP - currentRank.xp) / (nextRank.xp - currentRank.xp)) * 100; document.getElementById('xp-next-rank').textContent = `${nextRank.xp} XP`; document.getElementById('xp-progress-bar').style.width = `${progress}%`; } else { document.getElementById('xp-next-rank').textContent = 'MAX'; document.getElementById('xp-progress-bar').style.width = '100%'; } },
+        applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); this.state.settings.theme = theme; document.getElementById('theme-toggle').checked = (theme === 'dark'); this.saveState(); if(this.state.currentPage === 'graph') this.renderGraph(); },
+        triggerConfetti() { const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d'); if(!ctx) return; canvas.width = window.innerWidth; canvas.height = window.innerHeight; let confetti = []; const confettiCount = 100; const colors = ['#3b82f6', '#60a5fa', '#10b981', '#f97316', '#facc15']; for (let i = 0; i < confettiCount; i++) { confetti.push({ x: canvas.width / 2, y: canvas.height / 2, r: Math.random() * 5 + 2, d: Math.random() * confettiCount, color: colors[Math.floor(Math.random() * colors.length)], tilt: Math.floor(Math.random() * 10) - 10, tiltAngle: 0 }); } let frame = 0; function drawConfetti() { if(!ctx) return; ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < confetti.length; i++) { const c = confetti[i]; ctx.beginPath(); ctx.lineWidth = c.r / 2; ctx.strokeStyle = c.color; ctx.moveTo(c.x + c.tilt + c.r / 4, c.y); ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 4); ctx.stroke(); } updateConfetti(); } function updateConfetti() { for (let i = 0; i < confetti.length; i++) { const c = confetti[i]; c.tiltAngle += 0.1; c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2; c.x += Math.sin(c.d); c.tilt = Math.sin(c.tiltAngle - i / 8) * 15; } if(frame < 150) { requestAnimationFrame(drawConfetti); frame++; } else if (ctx) { ctx.clearRect(0, 0, canvas.width, canvas.height); } } drawConfetti(); },
+        renderCalendarView(type) { const containerId = `${type}-content`; const container = document.getElementById(containerId); if (!this.calendarState[type]) { this.calendarState[type] = { date: new Date() }; } const currentDate = this.calendarState[type].date; container.innerHTML = ` <div class="calendar-container"> <div class="calendar-header"> <button class="icon-btn" data-action="prev-month" data-type="${type}"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg> </button> <h3>${currentDate.toLocaleString('ar-EG', { month: 'long', year: 'numeric' })}</h3> <button class="icon-btn" data-action="next-month" data-type="${type}"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg> </button> </div> <div class="calendar-grid"></div> </div> <div id="calendar-events-list"></div> `; const grid = container.querySelector('.calendar-grid'); const month = currentDate.getMonth(); const year = currentDate.getFullYear(); const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate(); const dayNames = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س']; dayNames.forEach(name => { grid.innerHTML += `<div class="calendar-day-name">${name}</div>`; }); for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; } const items = type === 'goals' ? this.state.goals : this.state.journalEntries; const eventsByDate = {}; items.forEach(item => { const dateStr = (type === 'goals' ? item.deadline : item.createdAt)?.slice(0, 10); if (dateStr) { if (!eventsByDate[dateStr]) eventsByDate[dateStr] = []; eventsByDate[dateStr].push(item); } }); for (let day = 1; day <= daysInMonth; day++) { const date = new Date(year, month, day); const dateStr = date.toISOString().slice(0, 10); const dayEl = document.createElement('div'); dayEl.className = 'calendar-day'; dayEl.textContent = day; dayEl.dataset.date = dateStr; if (eventsByDate[dateStr]) { const dot = document.createElement('div'); dot.className = `event-dot ${type.slice(0, -1)}`; dayEl.appendChild(dot); } grid.appendChild(dayEl); } container.querySelector('[data-action="prev-month"]').addEventListener('click', () => this.changeMonth(-1, type)); container.querySelector('[data-action="next-month"]').addEventListener('click', () => this.changeMonth(1, type)); grid.querySelectorAll('.calendar-day').forEach(day => { day.addEventListener('click', (e) => this.showEventsForDay(e.currentTarget.dataset.date, type)); }); },
+        changeMonth(direction, type) { this.calendarState[type].date.setMonth(this.calendarState[type].date.getMonth() + direction); this.renderCalendarView(type); },
+        showEventsForDay(dateStr, type) { if (!dateStr) return; const container = document.getElementById(`${type}-content`); const listContainer = container.querySelector('#calendar-events-list'); container.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); container.querySelector(`.calendar-day[data-date="${dateStr}"]`)?.classList.add('selected'); const items = (type === 'goals' ? this.state.goals : this.state.journalEntries).filter(item => { const itemDateStr = (type === 'goals' ? item.deadline : item.createdAt)?.slice(0, 10); return itemDateStr === dateStr; }); if (items.length > 0) { listContainer.innerHTML = items.map(item => this.createListItem(item, type.slice(0, -1)).outerHTML).join(''); } else { listContainer.innerHTML = `<p style="text-align: center; color: var(--text-secondary-color); padding: 20px 0;">لا توجد عناصر لهذا اليوم.</p>`; } },
+        renderTemplatesPage() { const list = document.getElementById('templates-list'); list.innerHTML = ''; if (this.state.templates.length === 0) { list.innerHTML = `<p style="color: var(--text-secondary-color); text-align: center; padding: 20px 0;">ليس لديك أي قوالب. أضف واحداً لتبدأ!</p>`; } else { this.state.templates.forEach(template => { list.appendChild(this.createListItem(template, 'template')); }); } },
+        openTemplateModal(id = null) { const modal = document.getElementById('templates-modal'); const form = form.querySelector('form'); form.reset(); document.getElementById('template-edit-id').value = id; if (id) { const template = this.state.templates.find(t => t.id === id); document.getElementById('templates-modal-title').textContent = 'تعديل القالب'; document.getElementById('template-title').value = template.title; document.getElementById('template-type').value = template.type; document.getElementById('template-type').disabled = true; this.toggleTemplateFields(template.type); if (template.type === 'goal') { document.getElementById('template-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('template-description').value = template.data.content || ''; document.getElementById('template-mood').value = template.data.mood || 3; } } else { document.getElementById('templates-modal-title').textContent = 'إضافة قالب جديد'; document.getElementById('template-type').disabled = false; this.toggleTemplateFields('goal'); } modal.style.display = 'flex'; anime({ targets: '#templates-modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' }); },
+        toggleTemplateFields(type) { document.getElementById('template-description-group').style.display = 'block'; document.getElementById('template-mood-group').style.display = type === 'journal' ? 'block' : 'none'; },
+        saveTemplate() { const id = document.getElementById('template-edit-id').value; const title = document.getElementById('template-title').value; const type = document.getElementById('template-type').value; const description = document.getElementById('template-description').value; const mood = document.getElementById('template-mood').value; const templateData = { title: title, type: type, data: {} }; if (type === 'goal') { templateData.data.description = description; } else if (type === 'journal') { templateData.data.content = description; templateData.data.mood = mood; } if (id) { const index = this.state.templates.findIndex(t => t.id === id); this.state.templates[index] = { ...this.state.templates[index], ...templateData }; } else { templateData.id = 't' + Date.now(); this.state.templates.push(templateData); } this.closeModal('templates-modal'); this.renderTemplatesPage(); },
+        applyTemplate(templateId) { const template = this.state.templates.find(t => t.id === templateId); if (!template) return; document.getElementById('item-title').value = template.data.title || template.title || ''; if (template.type === 'goal') { document.getElementById('item-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('item-description').value = template.data.content || ''; document.getElementById('journal-mood').value = template.data.mood || 3; } document.getElementById('templates-container').style.display = 'none'; },
+        renderPropertiesPage() { const list = document.getElementById('properties-list'); list.innerHTML = ''; if (this.state.propertyDefinitions.length === 0) { list.innerHTML = `<p style="color: var(--text-secondary-color); text-align: center; padding: 20px 0;">ليس لديك أي خصائص معرفة. أضف واحدة لتبدأ!</p>`; } else { this.state.propertyDefinitions.forEach(prop => { list.appendChild(this.createListItem(prop, 'propertyDefinition')); }); } },
+        openPropertyModal(id = null) { const modal = document.getElementById('properties-modal'); modal.querySelector('form').reset(); document.getElementById('property-edit-id').value = id; if (id) { const prop = this.findItem(id, 'propertyDefinition'); document.getElementById('properties-modal-title').textContent = 'تعديل الخاصية'; document.getElementById('property-name').value = prop.name; document.getElementById('property-type').value = prop.type; document.getElementById('property-options-group').style.display = prop.type === 'select' ? 'block' : 'none'; if (prop.type === 'select') document.getElementById('property-options').value = prop.options.join(', '); } else { document.getElementById('properties-modal-title').textContent = 'إضافة خاصية جديدة'; document.getElementById('property-options-group').style.display = 'none'; } modal.style.display = 'flex'; anime({ targets: '#properties-modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' }); },
+        savePropertyDefinition() { const id = document.getElementById('property-edit-id').value; const name = document.getElementById('property-name').value; const type = document.getElementById('property-type').value; const options = document.getElementById('property-options').value.split(',').map(s => s.trim()).filter(Boolean); const propData = { name, type, options: type === 'select' ? options : [] }; if (id) { const index = this.state.propertyDefinitions.findIndex(p => p.id === id); this.state.propertyDefinitions[index] = { ...this.state.propertyDefinitions[index], ...propData }; } else { propData.id = 'pd' + Date.now(); this.state.propertyDefinitions.push(propData); } this.closeModal('properties-modal'); this.renderPropertiesPage(); },
+        renderProperties(properties) { if (!properties) return ''; return Object.entries(properties).map(([key, value]) => value ? `<span class="property-tag"><strong>${key}:</strong> ${value}</span>` : '').join(''); },
+        renderPropertyInputs(container, currentValues) { this.state.propertyDefinitions.forEach(prop => { const formGroup = document.createElement('div'); formGroup.className = 'form-group'; let inputHTML = `<label for="prop-${prop.id}">${prop.name}</label>`; const currentValue = currentValues[prop.name] || ''; if (prop.type === 'text') { inputHTML += `<input type="text" id="prop-${prop.id}" data-property-name="${prop.name}" value="${currentValue}">`; } else if (prop.type === 'select') { inputHTML += `<select id="prop-${prop.id}" data-property-name="${prop.name}"><option value="">-- اختر --</option>${prop.options.map(opt => `<option value="${opt}" ${currentValue === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select>`; } formGroup.innerHTML = inputHTML; container.appendChild(formGroup); }); },
+        getPropertyValuesFromForm() { const values = {}; document.querySelectorAll('#properties-container [data-property-name]').forEach(input => { values[input.dataset.propertyName] = input.value; }); return values; }
     };
-    
-    // Placeholder for the rest of the JS logic.
-    // The actual implementation will contain all functions from the thought process.
-    // This is a simplified representation.
-    
-    // Example of a render function with animation
-    app.renderHabits = function() {
-        const list = document.getElementById('habits-list');
-        list.innerHTML = ''; // Clear previous items
-        if (this.state.habits.length === 0) {
-            list.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ ببناء عادات إيجابية.</div>`;
-            return;
-        }
-        this.state.habits.forEach(habit => {
-            const item = document.createElement('div');
-            item.className = `habit-item ${habit.completedToday ? 'completed' : ''}`;
-            item.dataset.id = habit.id;
-            item.style.opacity = 0; // Start invisible for animation
-            item.innerHTML = `
-                <div class="checkbox" data-action="toggle-habit">
-                    ${habit.completedToday ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}
-                </div>
-                <div class="content">
-                    <div class="title">${habit.title}</div>
-                    <div class="subtitle">الاستمرارية: ${habit.streak} أيام</div>
-                </div>
-                <button class="delete-btn" data-action="delete-habit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            `;
-            list.appendChild(item);
-        });
-        
-        anime({
-            targets: '.habit-item',
-            opacity: [0, 1],
-            translateY: [20, 0],
-            delay: anime.stagger(100),
-            easing: 'easeOutCubic'
-        });
-    };
-    
-    // The rest of the JS logic needs to be fully implemented here.
-    // This includes event listeners, all render functions, modals, linking, etc.
-    
     app.init();
 });
 </script>
