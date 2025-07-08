@@ -30,6 +30,7 @@
             --accent-light: #3b82f6;
             --accent-hover-light: #2563eb;
             --success-light: #10b981;
+            --section-bg-light: #f3f4f6;
 
             /* Dark Theme */
             --bg-dark: #111827;
@@ -40,6 +41,7 @@
             --accent-dark: #60a5fa;
             --accent-hover-dark: #3b82f6;
             --success-dark: #34d399;
+            --section-bg-dark: #1f2937;
         }
 
         [data-theme="light"] {
@@ -51,6 +53,7 @@
             --accent-color: var(--accent-light);
             --accent-hover-color: var(--accent-hover-light);
             --success-color: var(--success-light);
+            --section-bg-color: var(--section-bg-light);
         }
 
         [data-theme="dark"] {
@@ -62,6 +65,7 @@
             --accent-color: var(--accent-dark);
             --accent-hover-color: var(--accent-hover-dark);
             --success-color: var(--success-dark);
+            --section-bg-color: var(--section-bg-dark);
         }
 
         /* --- Base Styles & Animations --- */
@@ -139,8 +143,8 @@
         }
 
         /* --- List Item Styles --- */
-        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; opacity: 0;}
-        .list-item:last-child { border-bottom: none; }
+        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; opacity: 0; background-color: var(--card-bg-color); margin: 0 10px 10px; border-radius: var(--border-radius); box-shadow: 0 2px 4px rgba(0,0,0,0.03);}
+        .list-item:last-child { border-bottom: none; margin-bottom: 0; }
         .habit-item .checkbox { width: 24px; height: 24px; border: 2px solid var(--text-secondary-color); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         .habit-item.completed .checkbox { background-color: var(--success-color); border-color: var(--success-color); color: white; transform: scale(1.1); }
         .habit-item .checkbox svg { transition: transform 0.4s cubic-bezier(0.2, 1.5, 0.7, 1.5); transform: scale(0); }
@@ -313,6 +317,64 @@
             font-size: 20px;
         }
 
+        /* --- Goal Categories (Addition 2) --- */
+        .goal-category-section {
+            background-color: var(--section-bg-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .goal-category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+        .goal-category-header:hover {
+            background-color: var(--border-color);
+        }
+        .goal-category-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .goal-category-header .count-badge {
+            background-color: var(--card-bg-color);
+            color: var(--text-secondary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .goal-category-header .toggle-icon {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary-color);
+        }
+        .goal-category-header.expanded .toggle-icon {
+            transform: rotate(90deg);
+        }
+        .goal-list-collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+            background-color: var(--bg-color);
+            padding-top: 0;
+        }
+        .goal-list-collapsible.expanded {
+            max-height: 2000px; /* A large enough value to not clip content */
+            padding-top: 10px;
+        }
+        .goal-list-collapsible .list-item {
+            border: 1px solid var(--border-color);
+        }
+
 
         /* --- Misc --- */
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
@@ -466,40 +528,45 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
         streakBonuses: { '3': 20, '7': 50, '14': 100, '30': 250 },
         galleryTemplates: [
-            { id: 'gt1', title: 'خطة البنّاء: عقد من الإنجاز', bannerText: '10 سنوات', description: 'خطة شاملة ومتكاملة لبناء حياة متوازنة وناجحة على مدى العقد القادم، تركز على أربعة محاور أساسية: المهنة، المال، الصحة، والنمو الشخصي.',
-                pillars: [
-                    { title: 'محور التطور المهني والوظيفي', icon: '💼',
-                        goals: [
-                            { title: 'هدف 10 سنوات: كن خبيراً معترفاً به في مجالك', years: 10, description: 'الوصول إلى مستوى قيادي يتطلب التزاماً طويل الأمد بالتعلم والتطبيق. هذا الهدف مرتبط بـ [[هدف 5 سنوات: تولى قيادة المشاريع الهامة]].' },
-                            { title: 'هدف 5 سنوات: تولى قيادة المشاريع الهامة', years: 5, description: 'الانتقال من منفذ إلى قائد. قم بإدارة فريق، وتوجيه المبتدئين، وتحمل مسؤولية النتائج. هذا الهدف يعتمد على [[هدف 2 سنة: أتقن المهارات الأساسية واحصل على شهادة معتمدة]].' },
-                            { title: 'هدف 2 سنة: أتقن المهارات الأساسية واحصل على شهادة معتمدة', years: 2, description: 'ركز على بناء أساس قوي. احصل على شهادة مهنية رئيسية في مجالك لتعزيز مصداقيتك. ابدأ بـ [[هدف 1 سنة: ضع خطة تطوير شخصية (PDP)]].' },
-                            { title: 'هدف 1 سنة: ضع خطة تطوير شخصية (PDP)', years: 1, description: 'حدد المهارات التي تحتاجها، وابحث عن دورات تدريبية، وابدأ في بناء شبكة علاقاتك المهنية.' }
-                        ]
-                    },
-                    { title: 'محور الإتقان المالي', icon: '💰',
-                        goals: [
-                            { title: 'هدف 10 سنوات: حقق الاستقلال المالي', years: 10, description: 'بناء ثروة كافية لتغطية نفقاتك من خلال الدخل السلبي، مما يمنحك حرية الاختيار. هذا يتطلب [[هدف 7 سنوات: نوع محفظتك الاستثمارية]].' },
-                            { title: 'هدف 7 سنوات: نوع محفظتك الاستثمارية', years: 7, description: 'تجاوز الاستثمارات التقليدية. استكشف العقارات، الأسهم الفردية، أو المشاريع الصغيرة. هذا يعتمد على [[هدف 4 سنوات: ابدأ الاستثمار بشكل جدي]].' },
-                            { title: 'هدف 4 سنوات: ابدأ الاستثمار بشكل جدي', years: 4, description: 'ابدأ في استثمار 15-20% من دخلك في صناديق المؤشرات منخفضة التكلفة. تأكد أولاً من إنجاز [[هدف 1 سنة: أنشئ صندوق طوارئ وسدد الديون عالية الفائدة]].' },
-                            { title: 'هدف 1 سنة: أنشئ صندوق طوارئ وسدد الديون عالية الفائدة', years: 1, description: 'اجمع ما يعادل 6 أشهر من نفقاتك في حساب توفير، وقم بوضع خطة لسداد ديون بطاقات الائتمان.' }
-                        ]
-                    },
-                    { title: 'محور الصحة والعافية', icon: '❤️‍🩹', habits: [ 'نم 8 ساعات يومياً', 'اشرب 2 لتر ماء يومياً', 'مارس الرياضة 30 دقيقة' ],
-                        goals: [
-                            { title: 'هدف 10 سنوات: كن في أفضل حالة بدنية وذهنية', years: 10, description: 'اجعل العافية أسلوب حياة، وليس مجرد هدف مؤقت.' },
-                            { title: 'هدف 5 سنوات: شارك في تحدي بدني كبير', years: 5, description: 'تدرب وشارك في ماراثون، سباق ثلاثي (ترايثلون)، أو تسلق قمة جبلية. هذا يعتمد على [[هدف 2 سنة: اجعل اللياقة عادة يومية]].' },
-                            { title: 'هدف 2 سنة: اجعل اللياقة عادة يومية', years: 2, description: 'التزم بممارسة الرياضة 4-5 مرات أسبوعياً، وجرب أنواعاً مختلفة من التمارين (قوة، مرونة، تحمل). هذا يتطلب الالتزام بعادة [[مارس الرياضة 30 دقيقة]].' },
-                            { title: 'هدف 1 سنة: ابنِ أساسيات صحية قوية', years: 1, description: 'هذا الهدف مدعوم بعادات [[نم 8 ساعات يومياً]] و [[اشرب 2 لتر ماء يومياً]].' }
-                        ]
-                    },
-                     { title: 'محور النمو الشخصي والتعلم', icon: '🧠', habits: [ 'اقرأ 30 دقيقة يومياً' ],
-                        goals: [
-                            { title: 'هدف 10 سنوات: أتقن مهارة معقدة جديدة', years: 10, description: 'اختر مهارة تتطلب وقتاً وجهداً (لغة جديدة، برمجة، آلة موسيقية) وأتقنها. استمر في عادة [[اقرأ 30 دقيقة يومياً]] لدعم هذا الهدف.' },
-                            { title: 'هدف 5 سنوات: اقرأ 100 كتاب مؤثر', years: 5, description: 'اقرأ بمعدل 20 كتاباً سنوياً في مجالات متنوعة لتوسيع آفاقك. هذا يعتمد على عادة [[اقرأ 30 دقيقة يومياً]].' },
-                            { title: 'هدف 3 سنوات: سافر لاستكشاف ثقافة جديدة', years: 3, description: 'خطط لرحلة غامرة لبلد مختلف تماماً عن ثقافتك لتعزيز فهمك للعالم.' },
-                            { title: 'هدف 1 سنة: ابدأ عادة التعلم اليومي', years: 1, description: 'خصص 30 دقيقة يومياً لتعلم شيء جديد، سواء عبر دورة عبر الإنترنت، بودكاست، أو كتاب. ابدأ بعادة [[اقرأ 30 دقيقة يومياً]].' }
-                        ]
-                    }
+             {
+                id: 'gt_level1_lifeos',
+                title: 'نظام الحياة - المستوى الأول',
+                bannerText: 'LifeOS',
+                description: 'قالب شامل لإدارة الأهداف، الوقت، المال، والنمو الشخصي. انقر للاستيراد والبدء في تنظيم حياتك.',
+                properties: [
+                    { name: 'الحالة', type: 'select', options: ['لم يبدأ', 'قيد التنفيذ', 'مكتمل', 'مؤجل'] },
+                    { name: 'الربع', type: 'select', options: ['Q1', 'Q2', 'Q3', 'Q4'] },
+                    { name: 'الأهمية', type: 'select', options: ['عالية', 'متوسطة', 'منخفضة'] },
+                    { name: 'التصنيف المالي', type: 'select', options: ['احتياجات', 'رغبات', 'ادخار', 'دخل'] },
+                    { name: 'تقييم الكتاب', type: 'select', options: ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'] },
+                    { name: 'الدور', type: 'text' },
+                    { name: 'المادة الدراسية', type: 'text' },
+                ],
+                items: [
+                    { type: 'journal', title: 'مرحباً بك في نظام حياتك!', content: `## لوحة التحكم الرئيسية\n\nهذه هي نقطة البداية لنظام حياتك. تم إنشاء مجموعة من الصفحات وقواعد البيانات لمساعدتك على تنظيم كل شيء. \n\n**استكشف أقسامك:**\n- [[أهداف الحياة]]\n- [[إدارة الوقت]]\n- [[المالية الشخصية]]\n- [[قائمة القراءة]]\n- [[متتبع التمارين]]\n- [[التدوين اليومي]]\n- [[مركز الدراسة]]\n- [[تحذير: كلمات المرور]]\n\n**نصيحة:** ابدأ بتعبئة أهدافك للعام الحالي في صفحة [[أهداف هذا العام]].` },
+                    { type: 'goal', title: 'أهداف الحياة', description: 'هنا تضع رؤيتك الكبرى. اربط أهدافك السنوية والشهرية بهذه الرؤية.\n\n- [[أهداف 10 سنوات]]\n- [[أهداف هذا العام]]', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'أهداف 10 سنوات', description: 'ما هي الرؤية التي تسعى لتحقيقها على المدى الطويل؟ مثال: "تحقيق الاستقلال المالي".\n\n**انعكاس:** لماذا هذا الهدف مهم بالنسبة لي؟ ما الذي سيتغير في حياتي عند تحقيقه؟', properties: { 'الحالة': 'لم يبدأ' } },
+                    { type: 'goal', title: 'أهداف هذا العام', description: 'بناءً على رؤيتك لـ [[أهداف 10 سنوات]]، ما الذي تريد تحقيقه هذا العام؟\n\n- [[أهداف هذا الربع]]', properties: { 'الحالة': 'لم يبدأ' }, deadlineOffset: { setToEndOfYear: true } },
+                    { type: 'goal', title: 'أهداف هذا الربع', description: 'أهداف محددة للربع الحالي من العام. مثال: "إكمال دورة تدريبية في مجال X".\n\n- [[أهداف هذا الشهر]]', properties: { 'الربع': 'Q1', 'الحالة': 'لم يبدأ' }, deadlineOffset: { setToEndOfQuarter: true } },
+                    { type: 'goal', title: 'أهداف هذا الشهر', description: 'مهام وأهداف صغيرة ومحددة لهذا الشهر. مثال: "الدراسة للدورة التدريبية لمدة 5 ساعات أسبوعياً".', properties: { 'الحالة': 'لم يبدأ' }, deadlineOffset: { setToEndOfMonth: true } },
+                    { type: 'goal', title: 'إدارة الوقت', description: `## الجدول الأسبوعي\n\nخطط أسبوعك بناءً على أدوارك ومسؤولياتك.\n\n| الوقت | السبت | الأحد | الاثنين | الثلاثاء | الأربعاء | الخميس | الجمعة |\n|---|---|---|---|---|---|---|---|\n| صباحاً | | | | | | | |\n| ظهراً | | | | | | | |\n| مساءً | | | | | | | |\n\n**مهام هذا الأسبوع:**\n- [[مهمة للأسبوع القادم]]`, properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'مهمة للأسبوع القادم', description: 'اربط هذه المهمة بأحد أهدافك الشهرية مثل [[أهداف هذا الشهر]]', properties: { 'الدور': 'مثال: طالب', 'الحالة': 'لم يبدأ' }, deadlineOffset: { days: 7 } },
+                    { type: 'goal', title: 'المالية الشخصية', description: 'تتبع دخلك ومصاريفك هنا. قم بإنشاء "هدف" أو "يومية" جديدة لكل عملية مالية.\n\n**نصيحة:** استخدم خاصية "التصنيف المالي" لتفصيل نفقاتك.', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'مثال: راتب الشهر', description: 'تسجيل الدخل الشهري', properties: { 'التصنيف المالي': 'دخل' } },
+                    { type: 'goal', title: 'مثال: إيجار المنزل', description: 'تسجيل المصاريف الأساسية', properties: { 'التصنيف المالي': 'احتياجات' } },
+                    { type: 'goal', title: 'مثال: اشتراك خدمة بث', description: 'تسجيل المصاريف الترفيهية', properties: { 'التصنيف المالي': 'رغبات' } },
+                    { type: 'goal', title: 'قائمة القراءة', description: 'أنشئ هدفاً لكل كتاب تقرأه. استخدم الخصائص لتتبع حالته وتقييمك له.', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'كتاب: فن اللامبالاة', description: 'ملاحظات وملخص للكتاب.', properties: { 'الحالة': 'مكتمل', 'تقييم الكتاب': '⭐⭐⭐⭐' } },
+                    { type: 'goal', title: 'كتاب: العادات الذرية', description: 'ملاحظات وملخص للكتاب.', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'متتبع التمارين', description: 'سجّل تمارينك في "دفتر اليوميات" واربطها بهذا الهدف. \n\n**مثال لتدوينة يومية:**\nتمرين اليوم:\n- تمرين الصدر: 3 مجموعات * 10 تكرارات @ 60كغ\n- تمرين القرفصاء: 4 مجموعات * 8 تكرارات @ 80كغ\n\n**ملاحظة:** ميزة الرسم البياني لتتبع التقدم قيد التطوير!', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'habit', title: 'ممارسة التمارين الرياضية 3 أيام في الأسبوع' },
+                    { type: 'goal', title: 'التدوين اليومي', description: 'مركز لكل أفكارك وتدويناتك.\n\n- [[دفتر اليوميات]]\n- [[صندوق الأفكار الإبداعية]]\n- [[تسجيلات ما قبل النوم]]', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'دفتر اليوميات', description: 'مكان لتفريغ أفكارك ومشاعرك اليومية.' },
+                    { type: 'goal', title: 'صندوق الأفكار الإبداعية', description: 'لا تدع فكرة تهرب منك. سجلها هنا.' },
+                    { type: 'goal', title: 'تسجيلات ما قبل النوم', description: 'اكتب 3 أشياء تمتن لها قبل النوم لتحسين جودة نومك.' },
+                    { type: 'goal', title: 'مركز الدراسة', description: 'أنشئ هدفاً لكل مادة دراسية لتنظيم الملاحظات والأسئلة.', properties: { 'الحالة': 'قيد التنفيذ' } },
+                    { type: 'goal', title: 'مادة: الرياضيات', description: '## ملاحظات المحاضرة\n...\n\n## أسئلة غير مفهومة\n- ...', properties: { 'المادة الدراسية': 'الرياضيات' } },
+                    { type: 'goal', title: 'تحذير: كلمات المرور', description: '## ⚠️ تحذير أمني ⚠️\n\n**لا تقم بتخزين كلمات المرور الحساسة أو المعلومات الشخصية هنا.** هذا التطبيق يعمل محلياً في متصفحك وبياناته غير مشفرة بشكل قوي.\n\n**الحل الموصى به:** استخدم مدير كلمات مرور مخصص.', properties: { 'الأهمية': 'عالية' } }
                 ]
             }
         ],
@@ -515,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!this.state.settings.journalView) this.state.settings.journalView = 'list';
                 if (!this.state.templates) this.state.templates = [];
                 if (!this.state.propertyDefinitions) this.state.propertyDefinitions = [];
+                if (!this.state.importedTemplates) this.state.importedTemplates = []; // Added for new feature
             } else { this.resetState(); }
         },
         resetState() {
@@ -527,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 propertyDefinitions: [ { id: 'pd1', name: 'الأولوية', type: 'select', options: ['عالي', 'متوسط', 'منخفض'] }, { id: 'pd2', name: 'المحور', type: 'text', options: [] }, { id: 'pd3', name: 'المدى', type: 'text', options: [] }, { id: 'pd4', name: 'المصدر', type: 'text', options: [] } ],
                 settings: { theme: 'light', lastOpened: new Date().toISOString().slice(0, 10), goalsView: 'list', journalView: 'list' },
                 currentPage: 'dashboard',
+                importedTemplates: [], // Added for new feature
             };
             this.saveState();
         },
@@ -566,8 +635,118 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHabits() { const list = document.getElementById('habits-list'); list.innerHTML = this.state.habits.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ ببناء عادات إيجابية.</div>` : ''; this.state.habits.forEach(habit => list.appendChild(this.createListItem(habit, 'habit'))); this.animateListItems('#habits-list .list-item'); },
         renderGoals() { const view = this.state.settings.goalsView; const toggler = document.getElementById('goals-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="board"]`).classList.toggle('active', view === 'board'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderGoalsList(); else if (view === 'board') this.renderGoalsBoard(); else this.renderCalendarView('goals'); },
         renderJournal() { const view = this.state.settings.journalView; const toggler = document.getElementById('journal-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderJournalList(); else this.renderCalendarView('journal'); },
-        renderGoalsList() { const container = document.getElementById('goals-content'); container.innerHTML = `<div class="card" id="goals-list"></div>`; const list = document.getElementById('goals-list'); list.innerHTML = this.state.goals.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">خطط لمستقبلك عبر إضافة أهداف جديدة.</div>` : ''; this.state.goals.forEach(goal => list.appendChild(this.createListItem(goal, 'goal'))); this.animateListItems('#goals-list .list-item'); },
-        renderJournalList() { const container = document.getElementById('journal-content'); container.innerHTML = `<div class="card" id="journal-entries-list"></div>`; const list = document.getElementById('journal-entries-list'); list.innerHTML = this.state.journalEntries.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">دوّن أفكارك ومشاعرك اليومية.</div>` : ''; this.state.journalEntries.forEach(entry => list.appendChild(this.createListItem(entry, 'journal'))); this.animateListItems('#journal-entries-list .list-item'); },
+        
+        renderGoalsList() {
+            const container = document.getElementById('goals-content');
+            
+            const now = new Date();
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - (now.getDay() + 1) % 7); // Week starts on Saturday
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            endOfMonth.setHours(23, 59, 59, 999);
+
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const endOfYear = new Date(now.getFullYear(), 11, 31);
+            endOfYear.setHours(23, 59, 59, 999);
+            
+            const categories = {
+                weekly: [],
+                monthly: [],
+                yearly: [],
+                longTerm: [],
+                unscheduled: [],
+                completed: []
+            };
+
+            this.state.goals.forEach(goal => {
+                if (goal.status === 'done') {
+                    categories.completed.push(goal);
+                    return;
+                }
+                
+                if (!goal.deadline) {
+                    categories.unscheduled.push(goal);
+                    return;
+                }
+
+                const deadlineDate = new Date(goal.deadline);
+                if (isNaN(deadlineDate.getTime())) {
+                    categories.unscheduled.push(goal);
+                    return;
+                }
+
+                if (deadlineDate >= startOfWeek && deadlineDate <= endOfWeek) {
+                    categories.weekly.push(goal);
+                } else if (deadlineDate > endOfWeek && deadlineDate <= endOfMonth) {
+                    categories.monthly.push(goal);
+                } else if (deadlineDate > endOfMonth && deadlineDate <= endOfYear) {
+                    categories.yearly.push(goal);
+                } else if (deadlineDate > endOfYear) {
+                    categories.longTerm.push(goal);
+                }
+            });
+
+            const categoryOrder = [
+                { key: 'weekly', title: '🎯 أهداف هذا الأسبوع', icon: '🎯', expanded: true },
+                { key: 'monthly', title: '🌙 أهداف هذا الشهر', icon: '🌙', expanded: true },
+                { key: 'yearly', title: '🗓️ أهداف هذا العام', icon: '🗓️', expanded: false },
+                { key: 'longTerm', title: '⭐ رؤية بعيدة المدى', icon: '⭐', expanded: false },
+                { key: 'unscheduled', title: '🗂️ أهداف غير مجدولة', icon: '🗂️', expanded: false },
+                { key: 'completed', title: '✅ الأهداف المكتملة', icon: '✅', expanded: false },
+            ];
+
+            let html = '';
+            let totalGoals = 0;
+            categoryOrder.forEach(({ key }) => totalGoals += categories[key].length);
+
+            if (totalGoals === 0 && categories.completed.length === 0) {
+                 container.innerHTML = `<div class="card" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">خطط لمستقبلك عبر إضافة أهداف جديدة.</div>`;
+                 return;
+            }
+
+            categoryOrder.forEach(({ key, title, icon, expanded }) => {
+                const goalList = categories[key];
+                if (goalList.length > 0) {
+                    const isExpanded = expanded;
+                    html += `
+                        <div class="goal-category-section">
+                            <div class="goal-category-header ${isExpanded ? 'expanded' : ''}" data-action="toggle-goal-category">
+                                <h3>${icon} ${title}</h3>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span class="count-badge">${goalList.length}</span>
+                                    <span class="toggle-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="goal-list-collapsible ${isExpanded ? 'expanded' : ''}">
+                                ${goalList.map(goal => this.createListItem(goal, 'goal').outerHTML).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html;
+            this.animateListItems('.goal-category-section');
+        },
+
+        renderJournalList() { 
+            const container = document.getElementById('journal-content'); 
+            container.innerHTML = `<div class="card" id="journal-entries-list"></div>`; 
+            const list = document.getElementById('journal-entries-list'); 
+            const sortedEntries = [...this.state.journalEntries].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            list.innerHTML = sortedEntries.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">دوّن أفكارك ومشاعرك اليومية.</div>` : ''; 
+            sortedEntries.forEach(entry => list.appendChild(this.createListItem(entry, 'journal'))); 
+            this.animateListItems('#journal-entries-list .list-item'); 
+        },
         renderGoalsBoard() { const container = document.getElementById('goals-content'); container.innerHTML = `<div class="kanban-board"><div class="kanban-column" data-status="todo"><h3>أفكار</h3><div class="kanban-cards"></div></div><div class="kanban-column" data-status="inprogress"><h3>قيد التنفيذ</h3><div class="kanban-cards"></div></div><div class="kanban-column" data-status="done"><h3>مكتمل</h3><div class="kanban-cards"></div></div></div>`; this.state.goals.forEach(goal => { const column = container.querySelector(`.kanban-column[data-status="${goal.status || 'todo'}"] .kanban-cards`); if (column) column.appendChild(this.createKanbanCard(goal)); }); this.setupDragAndDrop(); anime({ targets: '.kanban-column', opacity: [0, 1], translateY: [20, 0], delay: anime.stagger(100) });},
         renderSettings() { document.getElementById('username-input').value = this.state.user.name; document.getElementById('theme-toggle').checked = this.state.settings.theme === 'dark'; },
         renderGraph() { setTimeout(() => { const container = document.getElementById('graph-view-container'); const nodes = new vis.DataSet([...this.state.habits.map(i => ({ id: i.id, label: i.title, group: 'habits' })), ...this.state.goals.map(i => ({ id: i.id, label: i.title, group: 'goals' })), ...this.state.journalEntries.map(i => ({ id: i.id, label: new Date(i.createdAt).toLocaleDateString('ar-EG'), group: 'journal' })),]); const edges = new vis.DataSet([...this.state.goals, ...this.state.journalEntries].flatMap(item => (item.linkedItems || []).map(linkId => ({ from: item.id, to: linkId })))); const data = { nodes, edges }; const options = { layout: { hierarchical: false }, groups: { habits: { color: { background: '#22c55e' }, font: { color: 'white' } }, goals: { color: { background: '#3b82f6' }, font: { color: 'white' } }, journal: { color: { background: '#f97316' }, font: { color: 'white' } }, }, edges: { color: { color: getComputedStyle(document.body).getPropertyValue('--border-color'), highlight: getComputedStyle(document.body).getPropertyValue('--accent-color') } }, physics: { stabilization: true }, interaction: { hover: true }, }; new vis.Network(container, data, options); }, 100); },
@@ -578,8 +757,8 @@ document.addEventListener('DOMContentLoaded', () => {
             div.dataset.type = type;
             let contentHTML = '';
             switch (type) {
-                case 'habit': div.classList.toggle('completed', item.completedToday); contentHTML = `<div class="checkbox" data-action="toggle-habit">${item.completedToday ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}</div><div class="content"><div class="title">${item.title}</div><div class="subtitle">الاستمرارية: ${item.streak} أيام</div></div>`; break;
-                case 'goal': contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="list-item-properties">${this.renderProperties(item.properties)}</div></div>`; break;
+                case 'habit': div.classList.add('card'); div.style.borderBottom = '1px solid var(--border-color)'; div.classList.toggle('completed', item.completedToday); contentHTML = `<div class="checkbox" data-action="toggle-habit">${item.completedToday ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}</div><div class="content"><div class="title">${item.title}</div><div class="subtitle">الاستمرارية: ${item.streak} أيام</div></div>`; break;
+                case 'goal': div.classList.toggle('completed', item.status === 'done'); contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="list-item-properties">${this.renderProperties(item.properties)}</div></div>`; break;
                 case 'journal': const moodEmojis = { 1: '😞', 2: '😕', 3: '😐', 4: '😊', 5: '😃' }; contentHTML = `<div class="content"><div class="title">${moodEmojis[item.mood] || ''} ${new Date(item.createdAt).toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div><div class="subtitle">${this.renderTextWithLinks(item.content || '')}</div></div>`; break;
                 case 'template': contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="subtitle">قالب ${this.getItemTypeName(item.type)}</div></div>`; break;
                 case 'propertyDefinition': contentHTML = `<div class="content"><div class="title">${item.name}</div><div class="subtitle">النوع: ${item.type}</div></div>`; break;
@@ -595,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modal-cancel').addEventListener('click', () => this.closeModal('modal'));
             document.getElementById('username-input').addEventListener('change', e => { this.state.user.name = e.target.value; this.saveState(); this.renderDashboard(); });
             document.getElementById('theme-toggle').addEventListener('change', e => { this.applyTheme(e.target.checked ? 'dark' : 'light'); });
-            document.getElementById('reset-data-btn').addEventListener('click', () => { this.showConfirmation('إعادة تعيين البيانات', 'هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.', () => { this.closeModal('confirmation-modal'); this.resetState(); this.render(); }); });
+            document.getElementById('reset-data-btn').addEventListener('click', () => { this.showConfirmation('إعادة تعيين البيانات', 'هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.', () => { this.closeModal('confirmation-modal'); this.resetState(); this.render(); location.reload(); }); });
             document.querySelector('.container').addEventListener('click', e => {
                 const actionTarget = e.target.closest('[data-action]');
                 if (actionTarget) {
@@ -609,6 +788,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     else if (action === 'toggle-habit' && id) { this.toggleHabit(id, itemElement); }
                     else if (action === 'delete-item' && id) { if(!type) type = this.getItemTypeById(id); this.deleteItem(id, type, itemElement); }
                     else if (action === 'import-gallery-template' && id) { this.confirmImportGalleryTemplate(id); }
+                    else if (action === 'toggle-goal-category') {
+                        const header = actionTarget;
+                        header.classList.toggle('expanded');
+                        const content = header.nextElementSibling;
+                        if (content && content.classList.contains('goal-list-collapsible')) {
+                            content.classList.toggle('expanded');
+                        }
+                    }
                     return;
                 }
                 const listItem = e.target.closest('.list-item, .kanban-card');
@@ -721,12 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (type === 'goal') { newItem.progress = 0; newItem.status = 'todo'; if(!newItem.properties) newItem.properties = {}; newItem.completedAt = null; this.addXP(10, 'هدف جديد'); }
                 if (type === 'journal') { this.addXP(5, 'تدوينة جديدة'); }
                 this.state[type + 's'].push(newItem);
-                // Animate only the new item in
-                const listId = type === 'goal' ? 'goals-list' : 'journal-entries-list';
-                const list = document.getElementById(listId);
-                const newItemEl = this.createListItem(newItem, type);
-                list.appendChild(newItemEl);
-                this.animateListItems([newItemEl]);
+                this.render();
             }
             this.closeModal('modal');
         },
@@ -738,6 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     else { this.state[type + 's'] = this.state[type + 's'].filter(item => item.id !== id); }
                     this.addXP(-5, 'حذف عنصر');
                     this.saveState();
+                    this.render(); // Re-render after deleting
                 });
                 this.closeModal('confirmation-modal');
             });
@@ -920,7 +1103,14 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         renderGalleryPage() {
             const container = document.getElementById('gallery-list');
-            container.innerHTML = this.galleryTemplates.map(template => `
+            const templatesToShow = this.galleryTemplates.filter(t => !(this.state.importedTemplates || []).includes(t.id));
+
+            if (templatesToShow.length === 0) {
+                container.innerHTML = `<div class="card" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">لقد قمت باستيراد جميع الخطط المتاحة.</div>`;
+                return;
+            }
+
+            container.innerHTML = templatesToShow.map(template => `
                 <div class="gallery-card">
                     <div class="gallery-card-banner">${template.bannerText}</div>
                     <div class="gallery-card-content">
@@ -935,24 +1125,124 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmImportGalleryTemplate(templateId) {
             const template = this.galleryTemplates.find(t => t.id === templateId);
             if (!template) return;
-            const goalCount = template.pillars.reduce((acc, p) => acc + p.goals.length, 0);
-            const habitCount = template.pillars.reduce((acc, p) => acc + (p.habits?.length || 0), 0);
             this.showConfirmation(
                 `استيراد "${template.title}"؟`,
-                `سيؤدي هذا إلى إضافة ${goalCount} هدفًا جديدًا، و ${habitCount} عادة مقترحة، وتدوينة ترحيبية. هل أنت متأكد؟`,
+                `سيؤدي هذا إلى إضافة العديد من الأهداف والعادات والصفحات الجديدة لتنظيم حياتك. هل أنت متأكد؟`,
                 () => { this.closeModal('confirmation-modal'); this.importGalleryTemplate(templateId); }
             );
         },
         importGalleryTemplate(templateId) {
-            const template = this.galleryTemplates.find(t => t.id === templateId); if (!template) return;
-            const now = new Date(); const titleToIdMap = {};
-            template.pillars.forEach(pillar => { if (pillar.habits) { pillar.habits.forEach(habitTitle => { const habitExists = this.state.habits.some(h => h.title.toLowerCase() === habitTitle.toLowerCase()); if (!habitExists) { const newHabit = { id: 'h' + Date.now() + Math.random(), title: habitTitle, completedToday: false, streak: 0, createdAt: now.toISOString(), completionDates: [] }; this.state.habits.push(newHabit); } }); } });
-            template.pillars.forEach(pillar => { pillar.goals.forEach(goalData => { const deadline = new Date(now); deadline.setFullYear(deadline.getFullYear() + goalData.years); const newGoal = { id: 'g' + Date.now() + Math.random(), title: goalData.title, description: goalData.description, deadline: deadline.toISOString().slice(0,10), createdAt: now.toISOString(), status: 'todo', progress: 0, properties: { 'المحور': pillar.icon, 'المدى': `${goalData.years} سنوات`, 'المصدر': 'المعرض' }, linkedItems: [], completedAt: null }; this.state.goals.push(newGoal); titleToIdMap[goalData.title] = newGoal.id; }); });
-            this.state.goals.forEach(goal => { const linkMatches = goal.description.match(/\[\[(.*?)\]\]/g); if (linkMatches) { linkMatches.forEach(match => { const linkedTitle = match.slice(2, -2); const linkedId = titleToIdMap[linkedTitle] || this.findItemByTitle(linkedTitle)?.id; if (linkedId && !goal.linkedItems.includes(linkedId)) { goal.linkedItems.push(linkedId); } }); } });
-            const welcomeJournal = { id: 'j' + Date.now(), content: `## أهلاً بك في خطة البنّاء!\n\nلقد قمت للتو باستيراد خطة شاملة لمستقبلك. هذه مجرد نقطة بداية، لا تتردد في تعديل الأهداف وتخصيصها لتناسب طموحاتك الفريدة.\n\n**الخطوات التالية المقترحة:**\n1.  اذهب إلى صفحة الأهداف وقم بمراجعة الأهداف الجديدة.\n2.  ابدأ بالالتزام بالعادات اليومية التي تم إنشاؤها.\n3.  استخدم هذه اليومية لتسجيل أفكارك وتقدمك.\n\nبالتوفيق في رحلتك!`, mood: 5, createdAt: now.toISOString(), linkedItems: Object.values(titleToIdMap) };
-            this.state.journalEntries.push(welcomeJournal);
+            const template = this.galleryTemplates.find(t => t.id === templateId);
+            if (!template) return;
+
+            const now = new Date();
+            const titleToIdMap = {};
+            const createdItems = [];
+
+            if (template.properties) {
+                template.properties.forEach(propDef => {
+                    const propExists = this.state.propertyDefinitions.some(p => p.name.toLowerCase() === propDef.name.toLowerCase());
+                    if (!propExists) {
+                        this.state.propertyDefinitions.push({
+                            id: 'pd' + Date.now() + Math.random(),
+                            name: propDef.name,
+                            type: propDef.type,
+                            options: propDef.options || []
+                        });
+                    }
+                });
+            }
+
+            template.items.forEach(itemTpl => {
+                const newItem = {
+                    id: itemTpl.type.charAt(0) + Date.now() + Math.random().toString(36).substr(2, 9),
+                    createdAt: now.toISOString(),
+                    ...itemTpl
+                };
+
+                // **FIX STARTS HERE**
+                if (itemTpl.type === 'goal' && itemTpl.deadlineOffset) {
+                    const deadline = new Date();
+                    const offset = itemTpl.deadlineOffset;
+
+                    if (offset.days) deadline.setDate(deadline.getDate() + offset.days);
+                    if (offset.months) deadline.setMonth(deadline.getMonth() + offset.months);
+                    
+                    if (offset.setToEndOfMonth) {
+                        deadline.setMonth(deadline.getMonth() + (offset.monthOffset || 0));
+                        deadline.setDate(new Date(deadline.getFullYear(), deadline.getMonth() + 1, 0).getDate());
+                    }
+                    if (offset.setToEndOfQuarter) {
+                        const currentMonth = deadline.getMonth();
+                        const quarter = Math.floor(currentMonth / 3);
+                        const endOfQuarterMonth = quarter * 3 + 2;
+                        deadline.setMonth(endOfQuarterMonth);
+                        deadline.setDate(new Date(deadline.getFullYear(), deadline.getMonth() + 1, 0).getDate());
+                    }
+                    if (offset.setToEndOfYear) {
+                        deadline.setMonth(11);
+                        deadline.setDate(31);
+                    }
+                    
+                    newItem.deadline = deadline.toISOString().slice(0, 10);
+                }
+                // **FIX ENDS HERE**
+
+
+                switch(itemTpl.type) {
+                    case 'habit':
+                        newItem.completedToday = false;
+                        newItem.streak = 0;
+                        newItem.completionDates = [];
+                        this.state.habits.push(newItem);
+                        break;
+                    case 'goal':
+                        newItem.status = itemTpl.status || 'todo';
+                        newItem.progress = 0;
+                        newItem.completedAt = null;
+                        newItem.linkedItems = [];
+                        this.state.goals.push(newItem);
+                        break;
+                    case 'journal':
+                        newItem.mood = itemTpl.mood || 5;
+                        newItem.linkedItems = [];
+                        this.state.journalEntries.push(newItem);
+                        break;
+                }
+
+                titleToIdMap[newItem.title] = newItem.id;
+                createdItems.push({ id: newItem.id, type: newItem.type, description: newItem.description, content: newItem.content });
+            });
+
+            createdItems.forEach(created => {
+                const collection = this.state[created.type + 's'];
+                const item = collection.find(i => i.id === created.id);
+                if (item) {
+                    const text = item.description || item.content;
+                    if (text) {
+                        const linkMatches = text.match(/\[\[(.*?)\]\]/g);
+                        if (linkMatches) {
+                            linkMatches.forEach(match => {
+                                const linkedTitle = match.slice(2, -2);
+                                const linkedId = titleToIdMap[linkedTitle];
+                                if (linkedId && item.linkedItems && !item.linkedItems.includes(linkedId)) {
+                                    item.linkedItems.push(linkedId);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            if (!this.state.importedTemplates) {
+                this.state.importedTemplates = [];
+            }
+            this.state.importedTemplates.push(templateId);
+
+            this.addXP(100, 'استيراد نظام الحياة');
+            this.saveState();
             this.navigateTo('goals');
-            this.addXP(50, 'استيراد خطة');
+            this.triggerConfetti();
         },
         showConfirmation(title, message, onConfirm) {
             const modal = document.getElementById('confirmation-modal');
