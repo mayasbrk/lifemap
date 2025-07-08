@@ -12,35 +12,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    
     <style>
         :root {
             --font-family: 'Inter', sans-serif;
             --transition-speed: 0.3s;
-            --border-radius: 16px;
-            --border-radius-sm: 10px;
+            --border-radius: 12px;
 
             /* Light Theme */
-            --bg-light: #f4f7fe;
+            --bg-light: #f9fafb;
             --card-bg-light: #ffffff;
             --text-light: #1a1a1a;
             --text-secondary-light: #6b7280;
             --border-light: #e5e7eb;
             --accent-light: #3b82f6;
             --accent-hover-light: #2563eb;
-            --accent-soft-light: rgba(59, 130, 246, 0.1);
+            --success-light: #10b981;
 
             /* Dark Theme */
-            --bg-dark: #0f172a;
-            --card-bg-dark: #1e293b;
-            --text-dark: #f8fafc;
+            --bg-dark: #111827;
+            --card-bg-dark: #1f2937;
+            --text-dark: #f9fafb;
             --text-secondary-dark: #9ca3af;
-            --border-dark: #334155;
+            --border-dark: #374151;
             --accent-dark: #60a5fa;
             --accent-hover-dark: #3b82f6;
-            --accent-soft-dark: rgba(96, 165, 250, 0.1);
+            --success-dark: #34d399;
         }
 
         [data-theme="light"] {
@@ -51,7 +50,7 @@
             --border-color: var(--border-light);
             --accent-color: var(--accent-light);
             --accent-hover-color: var(--accent-hover-light);
-            --accent-soft-color: var(--accent-soft-light);
+            --success-color: var(--success-light);
         }
 
         [data-theme="dark"] {
@@ -62,10 +61,10 @@
             --border-color: var(--border-dark);
             --accent-color: var(--accent-dark);
             --accent-hover-color: var(--accent-hover-dark);
-            --accent-soft-color: var(--accent-soft-dark);
+            --success-color: var(--success-dark);
         }
 
-        /* --- Base Styles --- */
+        /* --- Base Styles & Animations --- */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         html, body {
             font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color);
@@ -75,13 +74,15 @@
         .container { padding: 20px; padding-bottom: 100px; }
         .page { display: none; }
         .page.active { display: block; }
+        .page-content > * {
+            opacity: 0; /* Initially hide elements for staggered animation */
+        }
 
         .page-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px;
         }
         h1 { font-size: 28px; font-weight: 700; margin-bottom: 0; }
-        h2 { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
         .page-header .actions { display: flex; gap: 8px; }
         
         /* --- Bottom Navigation Bar --- */
@@ -89,94 +90,233 @@
             position: fixed; bottom: 0; left: 0; right: 0; height: 80px;
             background-color: var(--card-bg-color); border-top: 1px solid var(--border-color);
             display: flex; justify-content: space-around; align-items: flex-start;
-            padding-top: 10px; box-shadow: 0 -5px 25px rgba(0,0,0,0.07); z-index: 1000;
+            padding-top: 10px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000;
+            transition: background-color var(--transition-speed), border-top var(--transition-speed);
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; cursor: pointer;
             color: var(--text-secondary-color); transition: color 0.2s, transform 0.2s; position: relative; width: 60px;
         }
-        .nav-item.active { color: var(--accent-color); font-weight: 600; }
         .nav-item:hover { transform: translateY(-3px); }
+        .nav-item.active { color: var(--accent-color); }
         .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
-        .nav-item span { font-size: 12px; }
+        .nav-item span { font-size: 12px; font-weight: 500; }
         .nav-indicator {
-            position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px;
-            background-color: var(--accent-color); border-radius: 50%; opacity: 0;
-            transition: opacity 0.3s ease;
+            position: absolute; bottom: -10px; width: 24px; height: 4px;
+            background-color: var(--accent-color); border-radius: 2px; opacity: 0;
+            transform: scaleX(0.5); transition: opacity 0.3s ease, transform 0.3s ease, background-color var(--transition-speed);
         }
-        .nav-item.active .nav-indicator { opacity: 1; }
+        .nav-item.active .nav-indicator { opacity: 1; transform: scaleX(1); }
 
         /* --- UI Components --- */
         .card {
             background-color: var(--card-bg-color); border: 1px solid var(--border-color);
             border-radius: var(--border-radius); padding: 20px; margin-bottom: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -2px rgba(0,0,0,0.03);
+            transition: background-color var(--transition-speed), border var(--transition-speed), transform 0.3s ease;
         }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.05); }
         .btn {
             background-color: var(--accent-color); color: white; border: none; padding: 12px 20px;
-            border-radius: var(--border-radius-sm); font-size: 16px; font-family: var(--font-family);
-            font-weight: 600; cursor: pointer; transition: all var(--transition-speed) ease;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            border-radius: var(--border-radius); font-size: 16px; font-family: var(--font-family);
+            font-weight: 500; cursor: pointer; transition: all var(--transition-speed) ease;
         }
         .btn:hover { background-color: var(--accent-hover-color); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-secondary { background-color: var(--accent-soft-color); color: var(--accent-color); border: none; }
-        .btn-secondary:hover { background-color: var(--accent-color); color: white; }
+        .btn:active { transform: translateY(-1px) scale(0.98); }
+        .btn-secondary { background-color: transparent; color: var(--text-color); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: var(--bg-color); }
         .icon-btn {
             background: none; border: none; cursor: pointer; color: var(--text-secondary-color);
-            padding: 8px; border-radius: 50%; transition: all 0.2s;
+            padding: 8px; border-radius: 50%; transition: all 0.2s ease;
         }
-        .icon-btn:hover { background-color: var(--accent-soft-color); color: var(--accent-color); }
+        .icon-btn:hover { background-color: var(--border-color); color: var(--text-color); transform: scale(1.1); }
         .fab {
             position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px;
             border-radius: 50%; font-size: 28px;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
             z-index: 999; display: flex; align-items: center; justify-content: center;
+            transform: scale(0); opacity: 0;
         }
 
-        /* --- List Item Styles (General) --- */
-        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: var(--border-radius-sm); margin-bottom: 10px; background-color: var(--bg-color); cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
-        .list-item:hover { transform: translateY(-2px); background-color: var(--accent-soft-color); }
+        /* --- List Item Styles --- */
+        .list-item { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; opacity: 0;}
+        .list-item:last-child { border-bottom: none; }
+        .habit-item .checkbox { width: 24px; height: 24px; border: 2px solid var(--text-secondary-color); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .habit-item.completed .checkbox { background-color: var(--success-color); border-color: var(--success-color); color: white; transform: scale(1.1); }
+        .habit-item .checkbox svg { transition: transform 0.4s cubic-bezier(0.2, 1.5, 0.7, 1.5); transform: scale(0); }
+        .habit-item.completed .checkbox svg { transform: scale(1); }
         .list-item .content { flex-grow: 1; min-width: 0; }
-        .list-item .title { font-weight: 600; transition: color 0.2s; }
+        .list-item .title { font-weight: 500; transition: color 0.2s; position: relative; }
+        .habit-item.completed .title { color: var(--text-secondary-color); }
+        .habit-item.completed .title::after { content: ''; position: absolute; left: 0; top: 50%; height: 2px; background: var(--text-secondary-color); width: 0; transition: width 0.4s ease-out; width: 100%; }
         .list-item .subtitle { font-size: 14px; color: var(--text-secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .delete-btn { background: none; border: none; color: var(--text-secondary-color); cursor: pointer; transition: all 0.2s; }
-        .delete-btn:hover { color: #ef4444; transform: scale(1.1); }
+        .delete-btn { background: none; border: none; color: var(--text-secondary-color); cursor: pointer; opacity: 0.5; transition: all 0.2s; }
+        .delete-btn:hover { opacity: 1; color: #ef4444; transform: scale(1.1); }
         
-        /* --- To-Do Item Specifics --- */
-        .todo-item .checkbox { width: 24px; height: 24px; border: 2px solid var(--text-secondary-color); border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; flex-shrink: 0; background-color: transparent; }
-        .todo-item.completed .checkbox { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
-        .todo-item.completed .title { text-decoration: line-through; color: var(--text-secondary-color); }
-        .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .priority-dot.high { background-color: #ef4444; }
-        .priority-dot.medium { background-color: #f97316; }
-        .priority-dot.low { background-color: #84cc16; }
+        /* --- Linking & Backlinks --- */
+        .rendered-link { background-color: var(--accent-color); color: white; padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+        .backlinks-container { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+        .backlinks-container h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-secondary-color); }
+        .backlink-item { display: block; background-color: var(--bg-color); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; cursor: pointer; transition: background-color 0.2s; }
+        .backlink-item:hover { background-color: var(--border-color); }
 
-        /* --- Modal & Forms --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .modal-content { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius); width: 100%; max-width: 500px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--text-secondary-color); }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-family); font-size: 15px; }
+        /* --- Modal --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: flex-start; z-index: 2000; padding-top: 5vh; overflow-y: auto; opacity: 0; }
+        .modal-content { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius); width: 90%; max-width: 500px; margin-bottom: 5vh; transform: scale(0.9) translateY(20px); opacity: 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: var(--border-radius); border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-family); font-size: 15px; }
+        .form-group textarea { line-height: 1.6; }
+        .form-group .hint { font-size: 12px; color: var(--text-secondary-color); margin-top: 5px; }
         .modal-actions { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
         
-        /* --- Pomodoro Timer Modal --- */
-        #pomodoro-modal .modal-content { text-align: center; }
-        #pomodoro-timer-display { font-size: 72px; font-weight: 700; color: var(--accent-color); margin: 20px 0; font-variant-numeric: tabular-nums; }
-        #pomodoro-status { font-size: 18px; font-weight: 500; color: var(--text-secondary-color); margin-bottom: 20px; }
-        #pomodoro-controls button { width: 100px; }
-        
-        /* --- Charts --- */
-        .chart-container { position: relative; height: 250px; width: 100%; }
+        /* --- Search Modal --- */
+        #search-modal .modal-content { padding: 0; overflow: hidden; }
+        #search-input { width: 100%; border: none; background-color: transparent; font-size: 18px; padding: 20px; }
+        #search-input:focus { outline: none; }
+        #search-results { max-height: 60vh; overflow-y: auto; }
+        .search-result-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; cursor: pointer; border-top: 1px solid var(--border-color); }
+        .search-result-item:hover { background-color: var(--bg-color); }
+        .search-result-item .icon { font-size: 20px; }
+        .search-result-item .content .title { font-weight: 500; }
+        .search-result-item .content .snippet { font-size: 13px; color: var(--text-secondary-color); }
+        .search-result-item .content .snippet mark { background-color: var(--accent-color); color: white; padding: 1px 3px; border-radius: 3px; }
+
+        /* --- View Toggler --- */
+        .view-toggler { display: flex; gap: 5px; background-color: var(--bg-color); padding: 5px; border-radius: var(--border-radius); margin-bottom: 20px; }
+        .view-toggler button { flex: 1; background: none; border: none; padding: 8px; border-radius: 8px; cursor: pointer; font-family: var(--font-family); font-weight: 500; color: var(--text-secondary-color); transition: all 0.2s; position: relative; }
+        .view-toggler button.active { background-color: var(--card-bg-color); color: var(--text-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+        /* --- Kanban Board Styles --- */
+        .kanban-board { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
+        .kanban-column { flex: 0 0 280px; background-color: var(--bg-color); border-radius: var(--border-radius); padding: 15px; transition: background-color 0.3s; }
+        .kanban-column h3 { font-size: 16px; margin-bottom: 15px; }
+        .kanban-cards { min-height: 100px; }
+        .kanban-card { background-color: var(--card-bg-color); border-radius: 8px; padding: 15px; margin-bottom: 10px; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); transition: opacity 0.2s, box-shadow 0.2s, transform 0.2s; }
+        .kanban-card:active { cursor: grabbing; transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .kanban-card.dragging { opacity: 0.5; }
+        .kanban-column.drag-over { background-color: var(--border-color); }
+
+        /* --- Calendar View --- */
+        .calendar-container { background-color: var(--card-bg-color); border-radius: var(--border-radius); padding: 20px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-header h3 { font-size: 18px; font-weight: 600; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .calendar-day-name { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-secondary-color); }
+        .calendar-day { position: relative; text-align: center; padding: 10px 5px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+        .calendar-day.other-month { color: var(--text-secondary-color); opacity: 0.5; }
+        .calendar-day:not(.other-month):hover { background-color: var(--bg-color); transform: scale(1.05); }
+        .calendar-day.selected { background-color: var(--accent-color); color: white; transform: scale(1.1); }
+        .calendar-day .event-dot { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; }
+        .event-dot.goal { background-color: var(--accent-color); }
+        .event-dot.journal { background-color: #f97316; }
+        .calendar-day.selected .event-dot { background-color: white; }
+        #calendar-events-list { margin-top: 20px; }
+
+        /* --- Properties & Templates --- */
+        .properties-container { border-top: 1px solid var(--border-color); margin-top: 20px; padding-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .list-item-properties { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .property-tag { background-color: var(--bg-color); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--text-secondary-color); }
+        .property-tag strong { color: var(--text-color); }
+        .templates-container { border-top: 1px solid var(--border-color); margin-top: 20px; padding-top: 20px; }
+        .template-btn { display: block; width: 100%; text-align: right; background-color: var(--bg-color); border: 1px dashed var(--border-color); color: var(--text-secondary-color); padding: 15px; margin-bottom: 10px; border-radius: var(--border-radius); cursor: pointer; transition: all 0.2s; }
+        .template-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        #property-options-group textarea { height: 80px; font-size: 14px; }
+
+        /* --- Gallery --- */
+        .gallery-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.07); }
+        .gallery-card-banner {
+            height: 120px;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-hover-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .gallery-card-content { padding: 20px; }
+        .gallery-card-content h3 { font-size: 20px; margin-bottom: 10px; }
+        .gallery-card-content p { font-size: 15px; color: var(--text-secondary-color); margin-bottom: 20px; }
 
         /* --- Graph View --- */
         #graph-view-container { width: 100%; height: 65vh; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--card-bg-color); }
+
+        /* --- XP & Level Up Animations --- */
+        #xp-gain-container {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+        .xp-gain-toast {
+            background-color: var(--success-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        #level-up-modal {
+            align-items: center;
+            padding-top: 0;
+        }
+        #level-up-modal .modal-content {
+            text-align: center;
+            border: 2px solid var(--success-color);
+        }
+        #level-up-modal h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 10px;
+        }
+        #level-up-modal p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+        #level-up-rank {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
         
-        /* --- Animations & Misc --- */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .page.active { animation: fadeIn 0.5s ease-out; }
-        .list-item, .card { animation: slideInUp 0.4s ease-out; }
+        /* --- Weekly Summary (Addition 1) --- */
+        #weekly-summary-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #weekly-summary-content li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        #weekly-summary-content li .icon {
+            font-size: 20px;
+        }
+
+
+        /* --- Misc --- */
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        .list-item.is-exiting { overflow: hidden; transition: opacity 0.3s, height 0.4s, padding 0.4s, margin 0.4s; height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important; opacity: 0 !important; }
 
     </style>
 </head>
@@ -191,54 +331,84 @@
                 <button class="icon-btn" data-action="open-settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.05.26 1.431l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 01-.26-1.431l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button>
             </div>
         </div>
-        <div class="card">
-            <h2>🏆 الرتبة والتقدم</h2>
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <div id="rank-name" style="font-size: 24px; font-weight: 600; color: var(--accent-color);"></div>
-                <div style="flex-grow: 1;">
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary-color); margin-bottom: 5px;"><span id="xp-current"></span><span id="xp-next-rank"></span></div>
-                    <div style="height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden;"><div id="xp-progress-bar" style="height: 100%; background-color: var(--accent-color); width: 0%; transition: width 0.5s ease;"></div></div>
+        <div class="page-content">
+            <div class="card">
+                <h2>🏆 الرتبة والتقدم</h2>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div id="rank-name" style="font-size: 24px; font-weight: 600; color: var(--accent-color);"></div>
+                    <div style="flex-grow: 1;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary-color); margin-bottom: 5px;"><span id="xp-current"></span><span id="xp-next-rank"></span></div>
+                        <div style="height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden;"><div id="xp-progress-bar" style="height: 100%; background-color: var(--accent-color); width: 0%; transition: width 0.5s ease-out;"></div></div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card">
-            <h2>📊 الإنجاز الأسبوعي</h2>
-            <div class="chart-container">
-                <canvas id="weekly-progress-chart"></canvas>
+            <div class="card" id="ai-recommendation-card"><h2 class="h2">💡 توصية ذكية</h2><p id="ai-recommendation-text"></p></div>
+            
+            <div class="card" id="weekly-summary-card">
+                <h2>📊 ملخص الأسبوع</h2>
+                <div id="weekly-summary-content"></div>
             </div>
-        </div>
-        <div class="card">
-            <h2>🎯 مهام اليوم</h2>
-            <div id="dashboard-todos-list"></div>
+            <div class="card"><h2>🎯 أهدافك النشطة</h2><div id="dashboard-goals-list"></div></div>
         </div>
     </div>
-    
-    <div id="todos" class="page">
-        <div class="page-header"><h1>مهام اليوم</h1></div>
-        <div id="todos-list-container"></div>
+    <div id="habits" class="page">
+        <div class="page-header"><h1>العادات</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
+        <div class="page-content">
+            <div class="card" id="habits-list"></div>
+        </div>
     </div>
-
     <div id="goals" class="page">
-        <div class="page-header"><h1>الأهداف</h1></div>
-        <div id="goals-list-container"></div>
+        <div class="page-header"><h1>الأهداف</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
+        <div class="page-content">
+            <div class="view-toggler" id="goals-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="board">لوحة</button><button data-view="calendar">تقويم</button></div>
+            <div id="goals-content"></div>
+        </div>
     </div>
-    
+    <div id="journal" class="page">
+        <div class="page-header"><h1>دفتر اليوميات</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
+        <div class="page-content">
+            <div class="view-toggler" id="journal-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="calendar">تقويم</button></div>
+            <div id="journal-content"></div>
+        </div>
+    </div>
+    <div id="gallery" class="page">
+        <div class="page-header"><h1>المعرض</h1></div>
+        <div class="page-content">
+            <div id="gallery-list"></div>
+        </div>
+    </div>
     <div id="graph" class="page">
-        <div class="page-header"><h1>خريطة الحياة</h1></div>
-        <div id="graph-view-container"></div>
+        <div class="page-header"><h1>خريطة الحياة</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
+        <div class="page-content">
+            <div id="graph-view-container"></div>
+        </div>
     </div>
-
     <div id="settings" class="page">
         <div class="page-header"><h1>الإعدادات</h1></div>
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><label for="username-input">الاسم</label><input type="text" id="username-input" style="width: 50%; text-align: left; direction: ltr; border: none; background: transparent; font-size: 16px; color: var(--text-color);"></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><span>الوضع الليلي</span><label class="theme-switch" style="position: relative; display: inline-block; width: 50px; height: 28px;"><input type="checkbox" id="theme-toggle" style="opacity: 0; width: 0; height: 0;"><span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px;"><span class="slider-knob" style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span></span></label></div>
-            <div style="padding: 15px 0;">
-                <button id="reset-data-btn" class="btn btn-secondary" style="width: 100%; background-color: #ef444420; color: #ef4444;">إعادة تعيين كل البيانات</button>
+        <div class="page-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><label for="username-input">الاسم</label><input type="text" id="username-input" style="width: 50%; text-align: left; direction: ltr; border: none; background: transparent; font-size: 16px; color: var(--text-color);"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);"><span>الوضع الليلي</span><label class="theme-switch" style="position: relative; display: inline-block; width: 50px; height: 28px;"><input type="checkbox" id="theme-toggle" style="opacity: 0; width: 0; height: 0;"><span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px;"><span class="slider-knob" style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;"></span></span></label></div>
+                <div style="padding: 15px 0; border-bottom: 1px solid var(--border-color);">
+                    <button id="manage-properties-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">إدارة الخصائص</button>
+                    <button id="manage-templates-btn" class="btn btn-secondary" style="width: 100%;">إدارة القوالب</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;"><span>إعادة تعيين كل البيانات</span><button id="reset-data-btn" class="btn" style="background-color: #ef4444;">إعادة تعيين</button></div>
             </div>
         </div>
     </div>
-
+    <div id="templates" class="page">
+        <div class="page-header"><h1>إدارة القوالب</h1><button class="icon-btn" data-action="open-settings-from-subpage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+        <div class="page-content">
+            <div class="card" id="templates-list-container"><div id="templates-list"></div><button id="add-template-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة قالب جديد</button></div>
+        </div>
+    </div>
+    <div id="properties" class="page">
+        <div class="page-header"><h1>إدارة الخصائص</h1><button class="icon-btn" data-action="open-settings-from-subpage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+        <div class="page-content">
+            <div class="card" id="properties-list-container"><div id="properties-list"></div><button id="add-property-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة خاصية جديدة</button></div>
+        </div>
+    </div>
 </div>
 
 <nav class="bottom-nav"></nav>
@@ -247,352 +417,448 @@
 
 <div id="modal" class="modal-overlay">
     <div class="modal-content">
+        <div id="templates-container" class="templates-container" style="display: none;"></div>
         <h3 id="modal-title"></h3>
         <form id="modal-form">
             <input type="hidden" id="edit-id"><input type="hidden" id="edit-type">
             <div class="form-group" id="title-group"><label for="item-title">العنوان</label><input type="text" id="item-title" required></div>
-            <div class="form-group" id="description-group"><label for="item-description">الوصف / المحتوى</label><textarea id="item-description" rows="4"></textarea><p class="hint" style="font-size: 12px; color: var(--text-secondary-color); margin-top: 5px;">لإنشاء رابط، اكتب [[عنوان العنصر]]</p></div>
-            
-            <div id="todo-fields">
-                <div class="form-group">
-                    <label for="todo-priority">الأولوية</label>
-                    <select id="todo-priority">
-                        <option value="low">منخفضة</option>
-                        <option value="medium" selected>متوسطة</option>
-                        <option value="high">عالية</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="todo-pomodoros">عدد جلسات التركيز (Pomodoros)</label>
-                    <input type="number" id="todo-pomodoros" value="1" min="1">
-                </div>
-            </div>
-
-            <div id="goal-fields" style="display:none;">
-                <div class="form-group"><label for="goal-deadline">تاريخ الانتهاء</label><input type="date" id="goal-deadline"></div>
-                 <div class="form-group">
-                    <label for="goal-pillar">المحور الأساسي</label>
-                    <select id="goal-pillar">
-                        <option value="none">بدون</option>
-                        <option value="career">💼 المهنة</option>
-                        <option value="finance">💰 المال</option>
-                        <option value="health">❤️‍🩹 الصحة</option>
-                        <option value="growth">🧠 النمو</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" id="modal-cancel" class="btn btn-secondary">إلغاء</button>
-                <button type="submit" class="btn">حفظ</button>
-            </div>
+            <div id="properties-container" class="properties-container"></div>
+            <div class="form-group" id="description-group"><label for="item-description">الوصف / المحتوى</label><textarea id="item-description" rows="4"></textarea><p class="hint">لإنشاء رابط، اكتب [[عنوان العنصر]]</p></div>
+            <div class="form-group" id="goal-fields"><label for="goal-deadline">تاريخ الانتهاء</label><input type="date" id="goal-deadline"></div>
+            <div class="form-group" id="journal-fields"><label>تقييم المزاج</label><select id="journal-mood"><option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option></select></div>
+            <div id="backlinks-container" class="backlinks-container" style="display: none;"></div>
+            <div class="modal-actions"><button type="button" id="modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ</button></div>
         </form>
     </div>
 </div>
+<div id="search-modal" class="modal-overlay"><div class="modal-content search-modal-content"><input type="search" id="search-input" placeholder="ابحث في كل شيء..." autocomplete="off"><div id="search-results"></div></div></div>
+<div id="templates-modal" class="modal-overlay"><div id="templates-modal-content" class="modal-content"><h3 id="templates-modal-title"></h3><form id="templates-modal-form"><input type="hidden" id="template-edit-id"><div class="form-group"><label for="template-type">نوع القالب</label><select id="template-type"><option value="goal">هدف</option><option value="journal">يومية</option></select></div><div class="form-group"><label for="template-title">عنوان القالب</label><input type="text" id="template-title" required></div><div class="form-group" id="template-description-group"><label for="template-description">محتوى القالب</label><textarea id="template-description" rows="4"></textarea></div><div class="form-group" id="template-mood-group"><label>المزاج الافتراضي</label><select id="template-mood"><option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option></select></div><div class="modal-actions"><button type="button" id="template-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ القالب</button></div></form></div></div>
+<div id="properties-modal" class="modal-overlay"><div class="modal-content"><h3 id="properties-modal-title"></h3><form id="properties-modal-form"><input type="hidden" id="property-edit-id"><div class="form-group"><label for="property-name">اسم الخاصية</label><input type="text" id="property-name" required></div><div class="form-group"><label for="property-type">نوع الخاصية</label><select id="property-type"><option value="text">نص</option><option value="select">اختيار</option></select></div><div class="form-group" id="property-options-group" style="display:none;"><label for="property-options">خيارات (افصل بينها بفاصلة)</label><textarea id="property-options" rows="3"></textarea></div><div class="modal-actions"><button type="button" id="property-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ الخاصية</button></div></form></div></div>
+<div id="confirmation-modal" class="modal-overlay"><div class="modal-content"><h3 id="confirmation-title"></h3><p id="confirmation-message"></p><div class="modal-actions"><button type="button" id="confirmation-cancel" class="btn btn-secondary">إلغاء</button><button type="button" id="confirmation-confirm" class="btn">تأكيد</button></div></div></div>
 
-<div id="pomodoro-modal" class="modal-overlay">
+<div id="level-up-modal" class="modal-overlay">
     <div class="modal-content">
-        <h3 id="pomodoro-task-title"></h3>
-        <div id="pomodoro-timer-display">25:00</div>
-        <p id="pomodoro-status">حان وقت التركيز!</p>
-        <div id="pomodoro-controls" class="modal-actions" style="justify-content: center;">
-            <button id="pomodoro-start" class="btn">ابدأ</button>
-            <button id="pomodoro-pause" class="btn btn-secondary" style="display: none;">إيقاف مؤقت</button>
-            <button id="pomodoro-reset" class="btn btn-secondary">إعادة</button>
-        </div>
-        <button id="pomodoro-close" class="icon-btn" style="position: absolute; top: 15px; right: 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+        <h2 id="level-up-title">🎉 ترقية! 🎉</h2>
+        <p>لقد وصلت إلى رتبة جديدة:</p>
+        <div id="level-up-rank"></div>
     </div>
 </div>
-
-<div id="confirmation-modal" class="modal-overlay"><div class="modal-content" style="text-align: center;"><h3 id="confirmation-title"></h3><p id="confirmation-message" style="margin: 15px 0;"></p><div class="modal-actions" style="justify-content: center;"><button type="button" id="confirmation-cancel" class="btn btn-secondary">إلغاء</button><button type="button" id="confirmation-confirm" class="btn">تأكيد</button></div></div></div>
+<div id="xp-gain-container"></div>
+<canvas id="confetti-canvas"></canvas>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const app = {
         state: {},
-        charts: {},
-        pomodoro: {
-            timer: null,
-            taskId: null,
-            timeLeft: 25 * 60,
-            initialTime: 25 * 60,
-            isPaused: true,
-            mode: 'work', // 'work', 'shortBreak', 'longBreak'
-            sessions: 0,
-        },
+        calendarState: { goals: { date: new Date() }, journal: { date: new Date() } },
         navItems: [
             { id: 'dashboard', label: 'الرئيسية', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" /></svg>` },
-            { id: 'todos', label: 'المهام', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` },
+            { id: 'habits', label: 'العادات', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691v-2.985a2.25 2.25 0 00-2.25-2.25h-2.985a2.25 2.25 0 00-2.25 2.25v2.985" /></svg>` },
             { id: 'goals', label: 'الأهداف', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 19.875v-6.75zM3 8.625c0-.621.504-1.125 1.125-1.25h15.75c.621 0 1.125.504 1.125 1.125v.375c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 9V8.625z" /></svg>` },
+            { id: 'journal', label: 'اليوميات', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>` },
+            { id: 'gallery', label: 'المعرض', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>` },
             { id: 'graph', label: 'الخريطة', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>` },
         ],
-        ranks: [ { name: 'مبتدئ', xp: 0 }, { name: 'منظم', xp: 100 }, { name: 'مثابر', xp: 300 }, { name: 'مُنجز', xp: 700 }, { name: 'خبير', xp: 1500 }, { name: 'سيد الحياة', xp: 3000 } ],
-        
-        init() { this.loadState(); this.setupEventListeners(); this.applyTheme(this.state.settings.theme); this.renderNav(); this.navigateTo(this.state.currentPage || 'dashboard', true); this.initPWA(); },
+        ranks: [
+            { name: 'مبتدئ', xp: 0 }, { name: 'منظم', xp: 100 }, { name: 'مثابر', xp: 250 }, 
+            { name: 'مُنجز', xp: 500 }, { name: 'مخطط', xp: 1000 }, { name: 'خبير', xp: 2000 }, 
+            { name: 'سيد الحياة', xp: 5000 }
+        ],
+        streakBonuses: { '3': 20, '7': 50, '14': 100, '30': 250 },
+        galleryTemplates: [
+            { id: 'gt1', title: 'خطة البنّاء: عقد من الإنجاز', bannerText: '10 سنوات', description: 'خطة شاملة ومتكاملة لبناء حياة متوازنة وناجحة على مدى العقد القادم، تركز على أربعة محاور أساسية: المهنة، المال، الصحة، والنمو الشخصي.',
+                pillars: [
+                    { title: 'محور التطور المهني والوظيفي', icon: '💼',
+                        goals: [
+                            { title: 'هدف 10 سنوات: كن خبيراً معترفاً به في مجالك', years: 10, description: 'الوصول إلى مستوى قيادي يتطلب التزاماً طويل الأمد بالتعلم والتطبيق. هذا الهدف مرتبط بـ [[هدف 5 سنوات: تولى قيادة المشاريع الهامة]].' },
+                            { title: 'هدف 5 سنوات: تولى قيادة المشاريع الهامة', years: 5, description: 'الانتقال من منفذ إلى قائد. قم بإدارة فريق، وتوجيه المبتدئين، وتحمل مسؤولية النتائج. هذا الهدف يعتمد على [[هدف 2 سنة: أتقن المهارات الأساسية واحصل على شهادة معتمدة]].' },
+                            { title: 'هدف 2 سنة: أتقن المهارات الأساسية واحصل على شهادة معتمدة', years: 2, description: 'ركز على بناء أساس قوي. احصل على شهادة مهنية رئيسية في مجالك لتعزيز مصداقيتك. ابدأ بـ [[هدف 1 سنة: ضع خطة تطوير شخصية (PDP)]].' },
+                            { title: 'هدف 1 سنة: ضع خطة تطوير شخصية (PDP)', years: 1, description: 'حدد المهارات التي تحتاجها، وابحث عن دورات تدريبية، وابدأ في بناء شبكة علاقاتك المهنية.' }
+                        ]
+                    },
+                    { title: 'محور الإتقان المالي', icon: '💰',
+                        goals: [
+                            { title: 'هدف 10 سنوات: حقق الاستقلال المالي', years: 10, description: 'بناء ثروة كافية لتغطية نفقاتك من خلال الدخل السلبي، مما يمنحك حرية الاختيار. هذا يتطلب [[هدف 7 سنوات: نوع محفظتك الاستثمارية]].' },
+                            { title: 'هدف 7 سنوات: نوع محفظتك الاستثمارية', years: 7, description: 'تجاوز الاستثمارات التقليدية. استكشف العقارات، الأسهم الفردية، أو المشاريع الصغيرة. هذا يعتمد على [[هدف 4 سنوات: ابدأ الاستثمار بشكل جدي]].' },
+                            { title: 'هدف 4 سنوات: ابدأ الاستثمار بشكل جدي', years: 4, description: 'ابدأ في استثمار 15-20% من دخلك في صناديق المؤشرات منخفضة التكلفة. تأكد أولاً من إنجاز [[هدف 1 سنة: أنشئ صندوق طوارئ وسدد الديون عالية الفائدة]].' },
+                            { title: 'هدف 1 سنة: أنشئ صندوق طوارئ وسدد الديون عالية الفائدة', years: 1, description: 'اجمع ما يعادل 6 أشهر من نفقاتك في حساب توفير، وقم بوضع خطة لسداد ديون بطاقات الائتمان.' }
+                        ]
+                    },
+                    { title: 'محور الصحة والعافية', icon: '❤️‍🩹', habits: [ 'نم 8 ساعات يومياً', 'اشرب 2 لتر ماء يومياً', 'مارس الرياضة 30 دقيقة' ],
+                        goals: [
+                            { title: 'هدف 10 سنوات: كن في أفضل حالة بدنية وذهنية', years: 10, description: 'اجعل العافية أسلوب حياة، وليس مجرد هدف مؤقت.' },
+                            { title: 'هدف 5 سنوات: شارك في تحدي بدني كبير', years: 5, description: 'تدرب وشارك في ماراثون، سباق ثلاثي (ترايثلون)، أو تسلق قمة جبلية. هذا يعتمد على [[هدف 2 سنة: اجعل اللياقة عادة يومية]].' },
+                            { title: 'هدف 2 سنة: اجعل اللياقة عادة يومية', years: 2, description: 'التزم بممارسة الرياضة 4-5 مرات أسبوعياً، وجرب أنواعاً مختلفة من التمارين (قوة، مرونة، تحمل). هذا يتطلب الالتزام بعادة [[مارس الرياضة 30 دقيقة]].' },
+                            { title: 'هدف 1 سنة: ابنِ أساسيات صحية قوية', years: 1, description: 'هذا الهدف مدعوم بعادات [[نم 8 ساعات يومياً]] و [[اشرب 2 لتر ماء يومياً]].' }
+                        ]
+                    },
+                     { title: 'محور النمو الشخصي والتعلم', icon: '🧠', habits: [ 'اقرأ 30 دقيقة يومياً' ],
+                        goals: [
+                            { title: 'هدف 10 سنوات: أتقن مهارة معقدة جديدة', years: 10, description: 'اختر مهارة تتطلب وقتاً وجهداً (لغة جديدة، برمجة، آلة موسيقية) وأتقنها. استمر في عادة [[اقرأ 30 دقيقة يومياً]] لدعم هذا الهدف.' },
+                            { title: 'هدف 5 سنوات: اقرأ 100 كتاب مؤثر', years: 5, description: 'اقرأ بمعدل 20 كتاباً سنوياً في مجالات متنوعة لتوسيع آفاقك. هذا يعتمد على عادة [[اقرأ 30 دقيقة يومياً]].' },
+                            { title: 'هدف 3 سنوات: سافر لاستكشاف ثقافة جديدة', years: 3, description: 'خطط لرحلة غامرة لبلد مختلف تماماً عن ثقافتك لتعزيز فهمك للعالم.' },
+                            { title: 'هدف 1 سنة: ابدأ عادة التعلم اليومي', years: 1, description: 'خصص 30 دقيقة يومياً لتعلم شيء جديد، سواء عبر دورة عبر الإنترنت، بودكاست، أو كتاب. ابدأ بعادة [[اقرأ 30 دقيقة يومياً]].' }
+                        ]
+                    }
+                ]
+            }
+        ],
+
+        init() { this.loadState(); this.setupEventListeners(); this.checkDate(); this.applyTheme(this.state.settings.theme); this.renderNav(); this.navigateTo(this.state.currentPage || 'dashboard', true); this.initPWA(); },
         loadState() {
             const savedState = localStorage.getItem('lifeMapState');
             if (savedState) {
                 this.state = JSON.parse(savedState);
-                if(!this.state.todos) this.state.todos = [];
+                this.state.goals.forEach(g => { if (!g.status) g.status = 'todo'; if (!g.properties) g.properties = {}; if(g.completedAt === undefined) g.completedAt = null;});
+                this.state.habits.forEach(h => { if(!h.completionDates) h.completionDates = []; });
+                if (!this.state.settings.goalsView) this.state.settings.goalsView = 'list';
+                if (!this.state.settings.journalView) this.state.settings.journalView = 'list';
+                if (!this.state.templates) this.state.templates = [];
+                if (!this.state.propertyDefinitions) this.state.propertyDefinitions = [];
             } else { this.resetState(); }
         },
         resetState() {
             this.state = {
                 user: { name: 'مستكشف', xp: 0 },
-                todos: [
-                    { id: 'td1', title: 'إعداد خطة الأسبوع', completed: false, priority: 'high', pomodoros_total: 2, pomodoros_completed: 1, createdAt: new Date().toISOString() },
-                    { id: 'td2', title: 'الرد على رسائل البريد الإلكتروني', completed: true, priority: 'medium', pomodoros_total: 1, pomodoros_completed: 1, createdAt: new Date().toISOString() }
-                ],
-                goals: [ { id: 'g1', title: 'إطلاق النسخة الأولى من LifeMap', description: 'إنهاء البرمجة والنشر.', deadline: '2025-07-15', pillar: 'career', createdAt: new Date().toISOString(), linkedItems: [] } ],
-                settings: { theme: 'light', lastOpened: new Date().toISOString().slice(0, 10) },
+                habits: [ { id: 'h1', title: 'القراءة لمدة 20 دقيقة', completedToday: false, streak: 5, createdAt: new Date().toISOString(), completionDates: [] } ],
+                goals: [ { id: 'g1', title: 'إطلاق النسخة الأولى من LifeMap', description: 'إنهاء البرمجة والنشر.', deadline: '2025-07-15', progress: 75, createdAt: new Date().toISOString(), linkedItems: [], status: 'inprogress', properties: { 'الأولوية': 'عالي' }, completedAt: null } ],
+                journalEntries: [ { id: 'j1', content: 'شعور رائع اليوم بعد إنجاز جزء كبير من مشروع [[إطلاق النسخة الأولى من LifeMap]].', mood: 5, createdAt: new Date().toISOString(), linkedItems: ['g1'] } ],
+                templates: [ { id: 't1', title: 'مراجعة أسبوعية', type: 'journal', data: { title: 'مراجعة الأسبوع', content: "## إنجازات هذا الأسبوع\n\n- \n\n## تحديات واجهتني\n\n- \n\n## خطة الأسبوع القادم\n\n- " } } ],
+                propertyDefinitions: [ { id: 'pd1', name: 'الأولوية', type: 'select', options: ['عالي', 'متوسط', 'منخفض'] }, { id: 'pd2', name: 'المحور', type: 'text', options: [] }, { id: 'pd3', name: 'المدى', type: 'text', options: [] }, { id: 'pd4', name: 'المصدر', type: 'text', options: [] } ],
+                settings: { theme: 'light', lastOpened: new Date().toISOString().slice(0, 10), goalsView: 'list', journalView: 'list' },
                 currentPage: 'dashboard',
             };
             this.saveState();
         },
         saveState() { localStorage.setItem('lifeMapState', JSON.stringify(this.state)); },
+        checkDate() { const today = new Date().toISOString().slice(0, 10); if (this.state.settings.lastOpened !== today) { this.state.habits.forEach(h => { if (!h.completedToday) h.streak = 0; h.completedToday = false; }); this.state.settings.lastOpened = today; this.addXP(5, 'تسجيل الدخول اليومي'); } },
         navigateTo(pageId, isInitial = false) {
-            document.querySelector('.page.active')?.classList.remove('active');
-            this.state.currentPage = pageId;
+            const oldPage = document.querySelector('.page.active');
             const newPage = document.getElementById(pageId);
-            if(newPage) newPage.classList.add('active');
+            if(oldPage === newPage) return;
             
-            document.querySelectorAll('.nav-item').forEach(item => {
-                const isActive = item.dataset.page === pageId;
-                item.classList.toggle('active', isActive);
-                if (isActive) item.querySelector('.nav-indicator').style.opacity = '1';
-                else item.querySelector('.nav-indicator').style.opacity = '0';
-            });
-            
-            document.getElementById('fab-add').style.display = ['dashboard', 'graph', 'settings'].includes(pageId) ? 'none' : 'flex';
-            
-            if (!isInitial && newPage) {
-                anime({ targets: newPage, opacity: [0, 1], translateY: [10, 0], duration: 400, easing: 'easeOutCubic' });
+            const onAnimationComplete = () => {
+                oldPage?.classList.remove('active');
+                newPage.classList.add('active');
+                this.state.currentPage = pageId;
+                this.render();
+                this.animatePageIn(newPage);
             }
-            this.render();
+
+            if(oldPage && !isInitial) {
+                this.animatePageOut(oldPage, onAnimationComplete);
+            } else {
+                onAnimationComplete();
+            }
+
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.page === pageId));
+            const fab = document.getElementById('fab-add');
+            const showFab = !['dashboard', 'settings', 'graph', 'templates', 'properties', 'gallery'].includes(pageId);
+            this.animateFab(showFab);
         },
         render() {
-            const renderMap = { 'dashboard': this.renderDashboard, 'todos': this.renderTodos, 'goals': this.renderGoals, 'graph': this.renderGraph, 'settings': this.renderSettings };
+            const renderMap = { 'dashboard': this.renderDashboard, 'habits': this.renderHabits, 'goals': this.renderGoals, 'journal': this.renderJournal, 'graph': this.renderGraph, 'settings': this.renderSettings, 'templates': this.renderTemplatesPage, 'properties': this.renderPropertiesPage, 'gallery': this.renderGalleryPage };
             renderMap[this.state.currentPage]?.call(this);
             this.saveState();
         },
         renderNav() { const navContainer = document.querySelector('.bottom-nav'); navContainer.innerHTML = this.navItems.map(item => `<div class="nav-item ${this.state.currentPage === item.id ? 'active' : ''}" data-page="${item.id}">${item.icon}<span>${item.label}</span><div class="nav-indicator"></div></div>`).join(''); },
-        renderDashboard() {
-            document.getElementById('greeting').textContent = `أهلاً، ${this.state.user.name || 'مستكشف'}!`;
-            this.updateRank();
-            
-            const todosList = document.getElementById('dashboard-todos-list');
-            const activeTodos = this.state.todos.filter(t => !t.completed).slice(0, 3);
-            todosList.innerHTML = activeTodos.length === 0 ? `<p style="color: var(--text-secondary-color); text-align:center; padding: 20px 0;">رائع! لا توجد مهام متبقية لليوم.</p>` : activeTodos.map(todo => this.createListItem(todo, 'todo').outerHTML).join('');
-            
-            this.renderWeeklyProgressChart();
-        },
-        renderTodos() {
-            const container = document.getElementById('todos-list-container');
-            container.innerHTML = this.state.todos.length === 0 ? `<div class="card" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ بإضافة مهامك لليوم.</div>` : this.state.todos.map(todo => this.createListItem(todo, 'todo').outerHTML).join('');
-        },
-        renderGoals() {
-            const container = document.getElementById('goals-list-container');
-            container.innerHTML = this.state.goals.length === 0 ? `<div class="card" style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">خطط لمستقبلك عبر إضافة أهداف جديدة.</div>` : this.state.goals.map(goal => this.createListItem(goal, 'goal').outerHTML).join('');
-        },
-        renderSettings() {
-            document.getElementById('username-input').value = this.state.user.name;
-            document.getElementById('theme-toggle').checked = this.state.settings.theme === 'dark';
-        },
-        renderGraph() {
-            const container = document.getElementById('graph-view-container');
-            const nodes = new vis.DataSet([
-                ...this.state.todos.map(i => ({ id: i.id, label: i.title, group: 'todos' })), 
-                ...this.state.goals.map(i => ({ id: i.id, label: i.title, group: 'goals' })),
-            ]);
-            const edges = new vis.DataSet([
-                ...[...this.state.todos, ...this.state.goals].flatMap(item => (item.linkedItems || []).map(linkId => ({ from: item.id, to: linkId })))
-            ]);
-            const data = { nodes, edges };
-            const options = {
-                layout: { hierarchical: false },
-                groups: {
-                    todos: { color: { background: '#22c55e', border: '#16a34a' }, font: { color: 'white' } },
-                    goals: { color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white' } },
-                },
-                edges: { color: { color: getComputedStyle(document.body).getPropertyValue('--border-color'), highlight: getComputedStyle(document.body).getPropertyValue('--accent-color') } },
-                physics: { stabilization: true },
-                interaction: { hover: true },
-            };
-            new vis.Network(container, data, options);
-        },
+        renderDashboard() { document.getElementById('greeting').textContent = `أهلاً، ${this.state.user.name || 'مستكشف'}!`; this.updateRank(); document.getElementById('ai-recommendation-text').textContent = "ابدأ رحلتك مع خطة جاهزة من المعرض!"; this.renderWeeklySummary(); const goalsList = document.getElementById('dashboard-goals-list'); const activeGoals = this.state.goals.filter(g => g.status !== 'done').slice(0, 3); goalsList.innerHTML = activeGoals.length === 0 ? `<p style="color: var(--text-secondary-color);">لا توجد أهداف نشطة. أضف هدفًا جديدًا!</p>` : activeGoals.map(goal => this.createListItem(goal, 'goal').outerHTML).join(''); if(activeGoals.length > 0) this.animateListItems('#dashboard-goals-list .list-item'); },
+        renderHabits() { const list = document.getElementById('habits-list'); list.innerHTML = this.state.habits.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ ببناء عادات إيجابية.</div>` : ''; this.state.habits.forEach(habit => list.appendChild(this.createListItem(habit, 'habit'))); this.animateListItems('#habits-list .list-item'); },
+        renderGoals() { const view = this.state.settings.goalsView; const toggler = document.getElementById('goals-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="board"]`).classList.toggle('active', view === 'board'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderGoalsList(); else if (view === 'board') this.renderGoalsBoard(); else this.renderCalendarView('goals'); },
+        renderJournal() { const view = this.state.settings.journalView; const toggler = document.getElementById('journal-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderJournalList(); else this.renderCalendarView('journal'); },
+        renderGoalsList() { const container = document.getElementById('goals-content'); container.innerHTML = `<div class="card" id="goals-list"></div>`; const list = document.getElementById('goals-list'); list.innerHTML = this.state.goals.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">خطط لمستقبلك عبر إضافة أهداف جديدة.</div>` : ''; this.state.goals.forEach(goal => list.appendChild(this.createListItem(goal, 'goal'))); this.animateListItems('#goals-list .list-item'); },
+        renderJournalList() { const container = document.getElementById('journal-content'); container.innerHTML = `<div class="card" id="journal-entries-list"></div>`; const list = document.getElementById('journal-entries-list'); list.innerHTML = this.state.journalEntries.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">دوّن أفكارك ومشاعرك اليومية.</div>` : ''; this.state.journalEntries.forEach(entry => list.appendChild(this.createListItem(entry, 'journal'))); this.animateListItems('#journal-entries-list .list-item'); },
+        renderGoalsBoard() { const container = document.getElementById('goals-content'); container.innerHTML = `<div class="kanban-board"><div class="kanban-column" data-status="todo"><h3>أفكار</h3><div class="kanban-cards"></div></div><div class="kanban-column" data-status="inprogress"><h3>قيد التنفيذ</h3><div class="kanban-cards"></div></div><div class="kanban-column" data-status="done"><h3>مكتمل</h3><div class="kanban-cards"></div></div></div>`; this.state.goals.forEach(goal => { const column = container.querySelector(`.kanban-column[data-status="${goal.status || 'todo'}"] .kanban-cards`); if (column) column.appendChild(this.createKanbanCard(goal)); }); this.setupDragAndDrop(); anime({ targets: '.kanban-column', opacity: [0, 1], translateY: [20, 0], delay: anime.stagger(100) });},
+        renderSettings() { document.getElementById('username-input').value = this.state.user.name; document.getElementById('theme-toggle').checked = this.state.settings.theme === 'dark'; },
+        renderGraph() { setTimeout(() => { const container = document.getElementById('graph-view-container'); const nodes = new vis.DataSet([...this.state.habits.map(i => ({ id: i.id, label: i.title, group: 'habits' })), ...this.state.goals.map(i => ({ id: i.id, label: i.title, group: 'goals' })), ...this.state.journalEntries.map(i => ({ id: i.id, label: new Date(i.createdAt).toLocaleDateString('ar-EG'), group: 'journal' })),]); const edges = new vis.DataSet([...this.state.goals, ...this.state.journalEntries].flatMap(item => (item.linkedItems || []).map(linkId => ({ from: item.id, to: linkId })))); const data = { nodes, edges }; const options = { layout: { hierarchical: false }, groups: { habits: { color: { background: '#22c55e' }, font: { color: 'white' } }, goals: { color: { background: '#3b82f6' }, font: { color: 'white' } }, journal: { color: { background: '#f97316' }, font: { color: 'white' } }, }, edges: { color: { color: getComputedStyle(document.body).getPropertyValue('--border-color'), highlight: getComputedStyle(document.body).getPropertyValue('--accent-color') } }, physics: { stabilization: true }, interaction: { hover: true }, }; new vis.Network(container, data, options); }, 100); },
         createListItem(item, type) {
             const div = document.createElement('div');
             div.className = `list-item ${type}-item`;
             div.dataset.id = item.id;
             div.dataset.type = type;
             let contentHTML = '';
-
             switch (type) {
-                case 'todo':
-                    div.classList.toggle('completed', item.completed);
-                    contentHTML = `
-                        <div class="checkbox" data-action="toggle-todo">${item.completed ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}</div>
-                        <div class="priority-dot ${item.priority}"></div>
-                        <div class="content">
-                            <div class="title">${item.title}</div>
-                            <div class="subtitle">التركيز: ${item.pomodoros_completed || 0} / ${item.pomodoros_total} جلسة</div>
-                        </div>
-                        <button class="icon-btn" data-action="start-pomodoro"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg></button>
-                    `;
-                    break;
-                case 'goal':
-                    const pillarIcons = { career: '💼', finance: '💰', health: '❤️‍🩹', growth: '🧠' };
-                    contentHTML = `
-                        <div class="content">
-                            <div class="title">${pillarIcons[item.pillar] || ''} ${item.title}</div>
-                            <div class="subtitle">${item.description.substring(0, 50)}...</div>
-                        </div>
-                    `;
-                    break;
+                case 'habit': div.classList.toggle('completed', item.completedToday); contentHTML = `<div class="checkbox" data-action="toggle-habit">${item.completedToday ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : ''}</div><div class="content"><div class="title">${item.title}</div><div class="subtitle">الاستمرارية: ${item.streak} أيام</div></div>`; break;
+                case 'goal': contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="list-item-properties">${this.renderProperties(item.properties)}</div></div>`; break;
+                case 'journal': const moodEmojis = { 1: '😞', 2: '😕', 3: '😐', 4: '😊', 5: '😃' }; contentHTML = `<div class="content"><div class="title">${moodEmojis[item.mood] || ''} ${new Date(item.createdAt).toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div><div class="subtitle">${this.renderTextWithLinks(item.content || '')}</div></div>`; break;
+                case 'template': contentHTML = `<div class="content"><div class="title">${item.title}</div><div class="subtitle">قالب ${this.getItemTypeName(item.type)}</div></div>`; break;
+                case 'propertyDefinition': contentHTML = `<div class="content"><div class="title">${item.name}</div><div class="subtitle">النوع: ${item.type}</div></div>`; break;
             }
             div.innerHTML = contentHTML + `<button class="delete-btn" data-action="delete-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
             return div;
         },
+        createKanbanCard(goal) { const card = document.createElement('div'); card.className = 'kanban-card'; card.dataset.id = goal.id; card.draggable = true; card.innerHTML = `<div class="title">${goal.title}</div><div class="list-item-properties">${this.renderProperties(goal.properties)}</div>`; return card; },
         setupEventListeners() {
-            document.querySelector('.bottom-nav').addEventListener('click', e => {
-                const navItem = e.target.closest('.nav-item');
-                if (navItem) this.navigateTo(navItem.dataset.page);
-            });
+            document.querySelector('.bottom-nav').addEventListener('click', e => { const navItem = e.target.closest('.nav-item'); if (navItem) this.navigateTo(navItem.dataset.page); });
             document.getElementById('fab-add').addEventListener('click', () => this.openModal());
             document.getElementById('modal-form').addEventListener('submit', e => { e.preventDefault(); this.saveItem(); });
             document.getElementById('modal-cancel').addEventListener('click', () => this.closeModal('modal'));
             document.getElementById('username-input').addEventListener('change', e => { this.state.user.name = e.target.value; this.saveState(); this.renderDashboard(); });
-            document.getElementById('theme-toggle').addEventListener('change', e => this.applyTheme(e.target.checked ? 'dark' : 'light'));
-            document.getElementById('reset-data-btn').addEventListener('click', () => { this.showConfirmation('إعادة تعيين البيانات', 'هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.', () => { this.resetState(); location.reload(); }); });
-            
+            document.getElementById('theme-toggle').addEventListener('change', e => { this.applyTheme(e.target.checked ? 'dark' : 'light'); });
+            document.getElementById('reset-data-btn').addEventListener('click', () => { this.showConfirmation('إعادة تعيين البيانات', 'هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.', () => { this.closeModal('confirmation-modal'); this.resetState(); this.render(); }); });
             document.querySelector('.container').addEventListener('click', e => {
                 const actionTarget = e.target.closest('[data-action]');
                 if (actionTarget) {
                     const action = actionTarget.dataset.action;
-                    const listItem = actionTarget.closest('.list-item');
-                    const id = listItem?.dataset.id;
-                    const type = listItem?.dataset.type;
-
-                    switch(action) {
-                        case 'toggle-todo': this.toggleTodo(id); break;
-                        case 'start-pomodoro': this.openPomodoroModal(id); break;
-                        case 'delete-item': this.deleteItem(id, type); break;
-                        case 'open-settings': this.navigateTo('settings'); break;
-                    }
-                } else {
-                    const listItem = e.target.closest('.list-item');
-                    if(listItem) this.openModal(listItem.dataset.id, listItem.dataset.type);
+                    const itemElement = e.target.closest('[data-id]');
+                    const id = itemElement?.dataset.id;
+                    let type = e.target.closest('[data-type]')?.dataset.type;
+                    if (action === 'open-search') { this.openModal('search-modal'); }
+                    else if (action === 'open-settings') { this.navigateTo('settings'); }
+                    else if (action === 'open-settings-from-subpage') { this.navigateTo('settings'); }
+                    else if (action === 'toggle-habit' && id) { this.toggleHabit(id, itemElement); }
+                    else if (action === 'delete-item' && id) { if(!type) type = this.getItemTypeById(id); this.deleteItem(id, type, itemElement); }
+                    else if (action === 'import-gallery-template' && id) { this.confirmImportGalleryTemplate(id); }
+                    return;
                 }
+                const listItem = e.target.closest('.list-item, .kanban-card');
+                if (listItem?.dataset.id) { const type = this.getItemTypeById(listItem.dataset.id); if (type !== 'habit') this.openModal('modal', listItem.dataset.id, type); }
             });
-            
-            // Pomodoro Modal listeners
-            document.getElementById('pomodoro-start').addEventListener('click', () => this.startPomodoro());
-            document.getElementById('pomodoro-pause').addEventListener('click', () => this.pausePomodoro());
-            document.getElementById('pomodoro-reset').addEventListener('click', () => this.resetPomodoro());
-            document.getElementById('pomodoro-close').addEventListener('click', () => this.closeModal('pomodoro-modal'));
+            document.getElementById('backlinks-container').addEventListener('click', e => { const backlink = e.target.closest('.backlink-item'); if(backlink) { this.closeModal('modal'); setTimeout(() => { this.navigateTo(backlink.dataset.type + 's'); this.openModal('modal', backlink.dataset.id, backlink.dataset.type); }, 350); } });
+            document.getElementById('goals-view-toggler').addEventListener('click', e => { const button = e.target.closest('button'); if (button) { this.state.settings.goalsView = button.dataset.view; this.renderGoals(); this.saveState(); } });
+            document.getElementById('journal-view-toggler').addEventListener('click', e => { const button = e.target.closest('button'); if (button) { this.state.settings.journalView = button.dataset.view; this.renderJournal(); this.saveState(); } });
+            document.getElementById('search-modal').addEventListener('click', (e) => { if (e.target.id === 'search-modal') this.closeModal('search-modal'); });
+            document.getElementById('search-input').addEventListener('input', e => this.performSearch(e.target.value));
+            document.getElementById('search-results').addEventListener('click', e => { const resultItem = e.target.closest('.search-result-item'); if (resultItem) { const { id, type } = resultItem.dataset; this.closeModal('search-modal'); setTimeout(() => { this.navigateTo(type + 's'); this.openModal('modal', id, type); }, 350); } });
+            document.getElementById('manage-templates-btn').addEventListener('click', () => this.navigateTo('templates'));
+            document.getElementById('add-template-btn').addEventListener('click', () => this.openModal('templates-modal'));
+            document.getElementById('templates-modal-form').addEventListener('submit', e => { e.preventDefault(); this.saveTemplate(); });
+            document.getElementById('template-modal-cancel').addEventListener('click', () => this.closeModal('templates-modal'));
+            document.getElementById('template-type').addEventListener('change', e => this.toggleTemplateFields(e.target.value));
+            document.getElementById('templates-list').addEventListener('click', e => { const item = e.target.closest('.list-item'); if (item && !e.target.closest('.delete-btn')) this.openModal('templates-modal', item.dataset.id); });
+            document.getElementById('manage-properties-btn').addEventListener('click', () => this.navigateTo('properties'));
+            document.getElementById('add-property-btn').addEventListener('click', () => this.openModal('properties-modal'));
+            document.getElementById('properties-modal-form').addEventListener('submit', e => { e.preventDefault(); this.savePropertyDefinition(); });
+            document.getElementById('property-modal-cancel').addEventListener('click', () => this.closeModal('properties-modal'));
+            document.getElementById('property-type').addEventListener('change', e => { document.getElementById('property-options-group').style.display = e.target.value === 'select' ? 'block' : 'none'; });
+            document.getElementById('properties-list').addEventListener('click', e => { const item = e.target.closest('.list-item'); if (item && !e.target.closest('.delete-btn')) this.openModal('properties-modal', item.dataset.id); });
         },
-        openModal(id = null, type = null) {
-            const modal = document.getElementById('modal');
-            const form = document.getElementById('modal-form');
-            form.reset();
+        setupDragAndDrop() { const cards = document.querySelectorAll('.kanban-card'); const columns = document.querySelectorAll('.kanban-column'); cards.forEach(card => { card.addEventListener('dragstart', () => card.classList.add('dragging')); card.addEventListener('dragend', () => card.classList.remove('dragging')); }); columns.forEach(column => { column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); }); column.addEventListener('dragleave', () => column.classList.remove('drag-over')); column.addEventListener('drop', e => { e.preventDefault(); column.classList.remove('drag-over'); const draggingCard = document.querySelector('.kanban-card.dragging'); if (draggingCard) { const oldColumn = draggingCard.closest('.kanban-column'); column.querySelector('.kanban-cards').appendChild(draggingCard); this.updateGoalStatus(draggingCard.dataset.id, column.dataset.status); } }); }); },
+        openModal(modalId, id = null, type = null) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
             
-            const currentType = type || (this.state.currentPage === 'todos' ? 'todo' : 'goal');
-            
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-type').value = currentType;
-            
-            // Toggle visibility of fields based on type
-            document.getElementById('todo-fields').style.display = currentType === 'todo' ? 'block' : 'none';
-            document.getElementById('goal-fields').style.display = currentType === 'goal' ? 'block' : 'none';
-            document.getElementById('description-group').style.display = currentType === 'goal' ? 'block' : 'none';
-
-            if (id) {
-                const item = this.findItem(id, currentType);
-                document.getElementById('modal-title').textContent = `تعديل ${this.getItemTypeName(currentType)}`;
-                document.getElementById('item-title').value = item.title;
-                if(currentType === 'todo') {
-                    document.getElementById('todo-priority').value = item.priority;
-                    document.getElementById('todo-pomodoros').value = item.pomodoros_total;
-                } else if (currentType === 'goal') {
-                    document.getElementById('item-description').value = item.description || '';
-                    document.getElementById('goal-deadline').value = item.deadline || '';
-                    document.getElementById('goal-pillar').value = item.pillar || 'none';
+            if (modalId === 'modal') {
+                const form = document.getElementById('modal-form');
+                form.reset();
+                const currentType = type || this.state.currentPage.slice(0, -1);
+                const templatesContainer = document.getElementById('templates-container');
+                const relevantTemplates = this.state.templates.filter(t => t.type === currentType);
+                if (!id && relevantTemplates.length > 0) {
+                    templatesContainer.style.display = 'block';
+                    templatesContainer.innerHTML = '<h4>استخدام قالب:</h4>' + relevantTemplates.map(t => `<button type="button" class="template-btn" data-template-id="${t.id}">${t.title}</button>`).join('');
+                    templatesContainer.querySelectorAll('.template-btn').forEach(btn => btn.addEventListener('click', e => this.applyTemplate(e.target.dataset.templateId)));
+                } else { templatesContainer.style.display = 'none'; }
+                document.getElementById('edit-id').value = id;
+                document.getElementById('edit-type').value = currentType;
+                document.getElementById('description-group').style.display = ['goal', 'journal'].includes(currentType) ? 'block' : 'none';
+                document.getElementById('goal-fields').style.display = currentType === 'goal' ? 'block' : 'none';
+                document.getElementById('journal-fields').style.display = currentType === 'journal' ? 'block' : 'none';
+                const backlinksContainer = document.getElementById('backlinks-container');
+                backlinksContainer.style.display = 'none';
+                backlinksContainer.innerHTML = '';
+                
+                const propertiesContainer = document.getElementById('properties-container');
+                propertiesContainer.innerHTML = '';
+                if (currentType === 'goal') {
+                    this.renderPropertyInputs(propertiesContainer, id ? this.findItem(id, 'goal').properties : {});
                 }
-            } else {
-                document.getElementById('modal-title').textContent = `إضافة ${this.getItemTypeName(currentType)}`;
+
+                if (id) {
+                    const item = this.findItem(id, currentType);
+                    document.getElementById('modal-title').textContent = `تعديل ${this.getItemTypeName(currentType)}`;
+                    document.getElementById('item-title').value = item.title || (item.mood ? '' : 'بدون عنوان');
+                    document.getElementById('item-description').value = item.description || item.content || '';
+                    if (currentType === 'goal') document.getElementById('goal-deadline').value = item.deadline || '';
+                    if (currentType === 'journal') document.getElementById('journal-mood').value = item.mood || 3;
+                    this.renderBacklinks(id, backlinksContainer);
+                } else { document.getElementById('modal-title').textContent = `إضافة ${this.getItemTypeName(currentType)}`; }
+            } else if (modalId === 'templates-modal') {
+                const form = modal.querySelector('form'); form.reset(); document.getElementById('template-edit-id').value = id; 
+                if (id) { const template = this.state.templates.find(t => t.id === id); document.getElementById('templates-modal-title').textContent = 'تعديل القالب'; document.getElementById('template-title').value = template.title; document.getElementById('template-type').value = template.type; document.getElementById('template-type').disabled = true; this.toggleTemplateFields(template.type); if (template.type === 'goal') { document.getElementById('template-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('template-description').value = template.data.content || ''; document.getElementById('template-mood').value = template.data.mood || 3; } } else { document.getElementById('templates-modal-title').textContent = 'إضافة قالب جديد'; document.getElementById('template-type').disabled = false; this.toggleTemplateFields('goal'); }
+            } else if (modalId === 'properties-modal') {
+                modal.querySelector('form').reset(); document.getElementById('property-edit-id').value = id; 
+                if (id) { const prop = this.findItem(id, 'propertyDefinition'); document.getElementById('properties-modal-title').textContent = 'تعديل الخاصية'; document.getElementById('property-name').value = prop.name; document.getElementById('property-type').value = prop.type; document.getElementById('property-options-group').style.display = prop.type === 'select' ? 'block' : 'none'; if (prop.type === 'select') document.getElementById('property-options').value = prop.options.join(', '); } else { document.getElementById('properties-modal-title').textContent = 'إضافة خاصية جديدة'; document.getElementById('property-options-group').style.display = 'none'; }
+            } else if (modalId === 'search-modal') {
+                document.getElementById('search-input').value = '';
+                document.getElementById('search-results').innerHTML = '';
+                setTimeout(() => document.getElementById('search-input').focus(), 100);
             }
             
             modal.style.display = 'flex';
-            anime({ targets: '#modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' });
+            anime({ targets: modal, opacity: [0, 1], duration: 300, easing: 'easeOutSine' });
+            anime({ targets: modal.querySelector('.modal-content'), opacity: [0, 1], scale: [0.9, 1], translateY: [20, 0], duration: 400, easing: 'easeOutCubic' });
         },
-        closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (!modal) return;
-            anime({ targets: `#${modalId} .modal-content`, opacity: [1, 0], scale: [1, 0.9], duration: 300, easing: 'easeInCubic', complete: () => modal.style.display = 'none' });
-        },
+        closeModal(modalId) { const modal = document.getElementById(modalId); if (!modal) return; anime({ targets: modal, opacity: 0, duration: 300, easing: 'easeInSine', complete: () => modal.style.display = 'none' }); anime({ targets: modal.querySelector('.modal-content'), opacity: 0, scale: 0.9, translateY: 20, duration: 300, easing: 'easeInCubic' }); },
         saveItem() {
             const id = document.getElementById('edit-id').value;
             const type = document.getElementById('edit-type').value;
             const title = document.getElementById('item-title').value;
-            let collection = this.state[type + 's'];
-            
-            let itemData;
-            if (type === 'todo') {
-                itemData = {
-                    title: title,
-                    priority: document.getElementById('todo-priority').value,
-                    pomodoros_total: parseInt(document.getElementById('todo-pomodoros').value, 10),
-                };
-            } else if (type === 'goal') {
-                itemData = {
-                    title: title,
-                    description: document.getElementById('item-description').value,
-                    deadline: document.getElementById('goal-deadline').value,
-                    pillar: document.getElementById('goal-pillar').value,
-                };
+            const description = document.getElementById('item-description').value;
+            const linkedItems = new Set();
+            if (description) {
+                const linkRegex = /\[\[(.*?)\]\]/g;
+                let match;
+                while((match = linkRegex.exec(description)) !== null) {
+                    const foundItem = this.findItemByTitle(match[1]);
+                    if (foundItem) {
+                        linkedItems.add(foundItem.id);
+                        this.addXP(2, 'ربط معلومة');
+                    }
+                }
             }
+            const itemData = { title: title, description: ['goal'].includes(type) ? description : undefined, content: ['journal'].includes(type) ? description : undefined, deadline: ['goal'].includes(type) ? document.getElementById('goal-deadline').value : undefined, mood: ['journal'].includes(type) ? document.getElementById('journal-mood').value : undefined, linkedItems: Array.from(linkedItems) };
+            if (type === 'goal') { itemData.properties = this.getPropertyValuesFromForm(); }
             
             if (id) {
+                const collection = this.state[type + 's'];
                 const itemIndex = collection.findIndex(i => i.id === id);
                 if (itemIndex > -1) collection[itemIndex] = { ...collection[itemIndex], ...itemData };
+                this.render(); // Full re-render on edit
             } else {
-                const newItem = {
-                    id: type.charAt(0) + Date.now(),
-                    createdAt: new Date().toISOString(),
-                    ...itemData
-                };
-                if(type === 'todo') {
-                    newItem.completed = false;
-                    newItem.pomodoros_completed = 0;
-                }
-                collection.push(newItem);
+                const newItem = { id: type.charAt(0) + Date.now(), createdAt: new Date().toISOString(), ...itemData };
+                if (type === 'habit') { newItem.streak = 0; newItem.completedToday = false; newItem.completionDates = []; this.addXP(5, 'عادة جديدة'); }
+                if (type === 'goal') { newItem.progress = 0; newItem.status = 'todo'; if(!newItem.properties) newItem.properties = {}; newItem.completedAt = null; this.addXP(10, 'هدف جديد'); }
+                if (type === 'journal') { this.addXP(5, 'تدوينة جديدة'); }
+                this.state[type + 's'].push(newItem);
+                // Animate only the new item in
+                const listId = type === 'goal' ? 'goals-list' : 'journal-entries-list';
+                const list = document.getElementById(listId);
+                const newItemEl = this.createListItem(newItem, type);
+                list.appendChild(newItemEl);
+                this.animateListItems([newItemEl]);
             }
-            
             this.closeModal('modal');
-            this.render();
         },
-        deleteItem(id, type) {
+        deleteItem(id, type, element) {
             this.showConfirmation('تأكيد الحذف', `هل أنت متأكد من حذف هذا الـ ${this.getItemTypeName(type)}؟`, () => {
-                this.state[type + 's'] = this.state[type + 's'].filter(item => item.id !== id);
-                this.render();
+                this.animateItemOut(element, () => {
+                    if (type === 'template') { this.state.templates = this.state.templates.filter(item => item.id !== id); }
+                    else if (type === 'propertyDefinition') { this.state.propertyDefinitions = this.state.propertyDefinitions.filter(item => item.id !== id); }
+                    else { this.state[type + 's'] = this.state[type + 's'].filter(item => item.id !== id); }
+                    this.addXP(-5, 'حذف عنصر');
+                    this.saveState();
+                });
                 this.closeModal('confirmation-modal');
             });
         },
-        toggleTodo(id) {
-            const todo = this.findItem(id, 'todo');
-            if (!todo) return;
-            todo.completed = !todo.completed;
-            this.addXP(todo.completed ? 10 : -10);
-            if(todo.completed) todo.completedAt = new Date().toISOString();
-            else todo.completedAt = null;
-            this.render();
+        toggleHabit(id, element) {
+            const habit = this.findItem(id, 'habit'); if (!habit) return;
+            const todayStr = new Date().toISOString().slice(0, 10);
+            habit.completedToday = !habit.completedToday;
+            element.classList.toggle('completed', habit.completedToday);
+            element.querySelector('.checkbox').innerHTML = habit.completedToday ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>' : '';
+            
+            if (habit.completedToday) {
+                habit.streak++; this.addXP(10, 'إكمال عادة'); this.triggerConfetti();
+                if (!habit.completionDates.includes(todayStr)) { habit.completionDates.push(todayStr); }
+                const streakBonus = this.streakBonuses[habit.streak.toString()];
+                if (streakBonus) { this.addXP(streakBonus, `استمرارية ${habit.streak} أيام!`); }
+            } else {
+                habit.streak = Math.max(0, habit.streak - 1);
+                this.addXP(-10, 'التراجع عن عادة');
+                habit.completionDates = habit.completionDates.filter(d => d !== todayStr);
+            }
+            element.querySelector('.subtitle').textContent = `الاستمرارية: ${habit.streak} أيام`;
+            this.saveState();
         },
-        findItem(id, type) { return this.state[type + 's']?.find(i => i.id === id); },
-        getItemTypeName(type) { return ({ 'todo': 'مهمة', 'goal': 'هدف' })[type] || 'عنصر'; },
-        addXP(amount) { this.state.user.xp += amount; this.updateRank(); },
+        updateGoalStatus(goalId, newStatus) { const goal = this.findItem(goalId, 'goal'); if (goal && goal.status !== newStatus) { const oldStatus = goal.status; goal.status = newStatus; if (newStatus === 'done' && oldStatus !== 'done') { goal.progress = 100; goal.completedAt = new Date().toISOString(); this.addXP(50, 'إنجاز هدف'); this.triggerConfetti(); } else if (newStatus === 'inprogress' && oldStatus === 'todo') { goal.progress = 10; this.addXP(10, 'بدء العمل على هدف'); goal.completedAt = null; } else if (newStatus === 'todo') { goal.progress = 0; goal.completedAt = null; } this.saveState(); } },
+        performSearch(query) { const resultsContainer = document.getElementById('search-results'); if (!query || query.length < 2) { resultsContainer.innerHTML = ''; return; } const lowerCaseQuery = query.toLowerCase(); const allItems = [ ...this.state.habits.map(i => ({...i, type: 'habit'})), ...this.state.goals.map(i => ({...i, type: 'goal'})), ...this.state.journalEntries.map(i => ({...i, type: 'journal'})) ]; const results = allItems.filter(item => { const title = item.title || ''; const content = item.description || item.content || ''; const propertiesString = item.properties ? Object.values(item.properties).join(' ') : ''; return title.toLowerCase().includes(lowerCaseQuery) || content.toLowerCase().includes(lowerCaseQuery) || propertiesString.toLowerCase().includes(lowerCaseQuery); }); this.renderSearchResults(results, lowerCaseQuery); },
+        renderSearchResults(results, query) { const resultsContainer = document.getElementById('search-results'); if (results.length === 0) { resultsContainer.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-secondary-color);">لا توجد نتائج.</div>`; return; } resultsContainer.innerHTML = results.map(item => { const title = item.title || `يومية ${new Date(item.createdAt).toLocaleDateString()}`; const content = item.description || item.content || ''; const snippetIndex = content.toLowerCase().indexOf(query); let snippet = snippetIndex > -1 ? content.substring(Math.max(0, snippetIndex - 20), snippetIndex + 40) : content.substring(0, 60); snippet = snippet.replace(new RegExp(query, 'gi'), (match) => `<mark>${match}</mark>`); return ` <div class="search-result-item" data-id="${item.id}" data-type="${item.type}"> <div class="icon">${this.getItemIcon(item.type)}</div> <div class="content"> <div class="title">${title}</div> <div class="snippet">${snippet ? '...' + snippet + '...' : ''}</div> </div> </div> `; }).join(''); },
+        renderTextWithLinks(text) { return text ? text.replace(/\[\[(.*?)\]\]/g, '<span class="rendered-link">$1</span>') : ''; },
+        renderBacklinks(itemId, container) { const allItems = [...this.state.goals, ...this.state.journalEntries, ...this.state.habits]; const backlinks = allItems.filter(item => item.linkedItems?.includes(itemId)); if (backlinks.length > 0) { container.style.display = 'block'; let html = `<h4>الروابط الواردة</h4>`; backlinks.forEach(link => { const type = this.getItemTypeById(link.id); html += `<div class="backlink-item" data-id="${link.id}" data-type="${type}">${this.getItemIcon(type)} ${link.title || `يومية ${new Date(link.createdAt).toLocaleDateString()}`}</div>`; }); container.innerHTML = html; } },
+        findItem(id, type) { const collectionName = type === 'propertyDefinition' ? 'propertyDefinitions' : type + 's'; return this.state[collectionName]?.find(i => i.id === id); },
+        findItemByTitle(title) { return [...this.state.habits, ...this.state.goals, ...this.state.journalEntries].find(item => item.title?.toLowerCase() === title.toLowerCase()); },
+        getItemTypeById(id) { if (id.startsWith('h')) return 'habit'; if (id.startsWith('g')) return 'goal'; if (id.startsWith('j')) return 'journal'; if (id.startsWith('t')) return 'template'; if (id.startsWith('pd')) return 'propertyDefinition'; return null; },
+        getItemTypeName(type) { return ({ 'habit': 'عادة', 'goal': 'هدف', 'journal': 'يومية', 'template': 'قالب', 'propertyDefinition': 'خاصية' })[type] || 'عنصر'; },
+        getItemIcon(type) { return ({ 'habit': '🔁', 'goal': '🎯', 'journal': '✍️', 'template': '📋', 'propertyDefinition': '🔧' })[type] || '🔗'; },
+        
+        // --- Animation System ---
+        animatePageIn(pageElement) {
+            const pageContent = pageElement.querySelector('.page-content');
+            if (!pageContent) return;
+            const elementsToAnimate = Array.from(pageContent.children);
+            anime({
+                targets: elementsToAnimate,
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(80, { start: 100 }),
+                duration: 500,
+                easing: 'easeOutCubic'
+            });
+        },
+        animatePageOut(pageElement, onComplete) {
+            const pageContent = pageElement.querySelector('.page-content');
+            const elementsToAnimate = pageContent ? pageContent.children : [];
+            anime({
+                targets: elementsToAnimate,
+                translateY: -20,
+                opacity: 0,
+                duration: 250,
+                easing: 'easeInCubic',
+                complete: onComplete
+            });
+        },
+        animateFab(show) {
+            anime({
+                targets: '#fab-add',
+                scale: show ? [0, 1] : [1, 0],
+                opacity: show ? [0, 1] : [1, 0],
+                rotate: '180deg',
+                duration: 400,
+                easing: 'spring(1, 80, 10, 0)'
+            });
+        },
+        animateListItems(selector) {
+            anime({
+                targets: selector,
+                opacity: [0, 1],
+                translateY: [15, 0],
+                delay: anime.stagger(60, { start: 50 }),
+                duration: 400,
+                easing: 'easeOutCubic'
+            });
+        },
+        animateItemOut(element, onComplete) {
+            if (!element) {
+                if (onComplete) onComplete();
+                return;
+            }
+            element.style.overflow = 'hidden';
+            anime({
+                targets: element,
+                height: 0,
+                opacity: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
+                marginBottom: 0,
+                duration: 400,
+                easing: 'easeInCubic',
+                complete: () => {
+                    element.remove();
+                    if (onComplete) onComplete();
+                }
+            });
+        },
+        
+        // --- Enhanced XP System ---
+        addXP(amount, reason = '') {
+            if (amount === 0) return;
+            const rankBefore = this.getCurrentRank();
+            this.state.user.xp = Math.max(0, this.state.user.xp + amount);
+            const rankAfter = this.getCurrentRank();
+            
+            this.showXpGainAnimation(amount, reason);
+            this.updateRank();
+
+            if (rankAfter.name !== rankBefore.name) {
+                setTimeout(() => this.showLevelUpAnimation(rankAfter), 500);
+            }
+        },
+        getCurrentRank() { return this.ranks.filter(r => r.xp <= this.state.user.xp).pop() || this.ranks[0]; },
         updateRank() {
             const currentXP = this.state.user.xp;
-            const currentRank = this.ranks.filter(r => r.xp <= currentXP).pop() || this.ranks[0];
+            const currentRank = this.getCurrentRank();
             const nextRank = this.ranks.find(r => r.xp > currentXP);
             document.getElementById('rank-name').textContent = currentRank.name;
             document.getElementById('xp-current').textContent = `${currentXP} XP`;
@@ -605,182 +871,145 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('xp-progress-bar').style.width = '100%';
             }
         },
-        applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            this.state.settings.theme = theme;
-            document.getElementById('theme-toggle').checked = (theme === 'dark');
-            this.saveState();
-            if(this.state.currentPage === 'dashboard') {
-                this.renderWeeklyProgressChart();
+        showXpGainAnimation(amount, reason) {
+            const container = document.getElementById('xp-gain-container');
+            const toast = document.createElement('div');
+            toast.className = 'xp-gain-toast';
+            toast.textContent = `${amount > 0 ? '+' : ''}${amount} XP ${reason ? `(${reason})` : ''}`;
+            if (amount < 0) toast.style.backgroundColor = '#ef4444';
+            container.appendChild(toast);
+            anime.timeline({ targets: toast, complete: () => toast.remove() })
+            .add({ opacity: [0, 1], translateY: [20, 0], scale: [0.8, 1], duration: 500, easing: 'easeOutElastic(1, .8)'})
+            .add({ opacity: 0, translateY: -20, duration: 500, easing: 'easeInExpo', delay: 2000 });
+        },
+        showLevelUpAnimation(newRank) {
+            const modal = document.getElementById('level-up-modal');
+            document.getElementById('level-up-rank').textContent = newRank.name;
+            this.openModal('level-up-modal');
+            const rankText = document.getElementById('level-up-rank');
+            const titleText = document.getElementById('level-up-title');
+            anime({ targets: titleText, scale: [1, 1.1, 1], duration: 1500, easing: 'easeInOutSine', loop: true });
+            anime({ targets: rankText, opacity: [0, 1], scale: [0.5, 1], duration: 800, easing: 'easeOutElastic(1, .7)' });
+            this.triggerConfetti(300);
+            setTimeout(() => { this.closeModal('level-up-modal'); anime.remove(titleText); }, 4000);
+        },
+        applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); this.state.settings.theme = theme; document.getElementById('theme-toggle').checked = (theme === 'dark'); this.saveState(); if(this.state.currentPage === 'graph') this.renderGraph(); },
+        triggerConfetti(count = 100) { const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d'); if(!ctx) return; canvas.width = window.innerWidth; canvas.height = window.innerHeight; let confetti = []; const confettiCount = count; const colors = ['#3b82f6', '#60a5fa', '#10b981', '#f97316', '#facc15']; for (let i = 0; i < confettiCount; i++) { confetti.push({ x: canvas.width / 2, y: canvas.height, r: Math.random() * 5 + 2, d: Math.random() * confettiCount, color: colors[Math.floor(Math.random() * colors.length)], tilt: Math.floor(Math.random() * 10) - 10, tiltAngle: 0, speed: Math.random() * 10 + 8 }); } let frame = 0; function drawConfetti() { if(!ctx) return; ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < confetti.length; i++) { const c = confetti[i]; ctx.beginPath(); ctx.lineWidth = c.r / 2; ctx.strokeStyle = c.color; ctx.moveTo(c.x + c.tilt + c.r / 4, c.y); ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 4); ctx.stroke(); } updateConfetti(); } function updateConfetti() { for (let i = 0; i < confetti.length; i++) { const c = confetti[i]; c.tiltAngle += 0.1; c.y -= c.speed; c.x += Math.sin(c.d + frame / 10 + i) * 2; c.tilt = Math.sin(c.tiltAngle - i / 8) * 15; if (c.y < -20) confetti[i].y = canvas.height + 20; } if(frame < 250) { requestAnimationFrame(drawConfetti); frame++; } else if (ctx) { ctx.clearRect(0, 0, canvas.width, canvas.height); } } drawConfetti(); },
+        renderCalendarView(type) { const containerId = `${type}-content`; const container = document.getElementById(containerId); if (!this.calendarState[type]) { this.calendarState[type] = { date: new Date() }; } const currentDate = this.calendarState[type].date; container.innerHTML = ` <div class="calendar-container"> <div class="calendar-header"> <button class="icon-btn" data-action="prev-month" data-type="${type}"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg> </button> <h3>${currentDate.toLocaleString('ar-EG', { month: 'long', year: 'numeric' })}</h3> <button class="icon-btn" data-action="next-month" data-type="${type}"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg> </button> </div> <div class="calendar-grid"></div> </div> <div id="calendar-events-list"></div> `; const grid = container.querySelector('.calendar-grid'); const month = currentDate.getMonth(); const year = currentDate.getFullYear(); const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate(); const dayNames = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س']; dayNames.forEach(name => { grid.innerHTML += `<div class="calendar-day-name">${name}</div>`; }); for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; } const items = type === 'goals' ? this.state.goals : this.state.journalEntries; const eventsByDate = {}; items.forEach(item => { const dateStr = (type === 'goals' ? item.deadline : item.createdAt)?.slice(0, 10); if (dateStr) { if (!eventsByDate[dateStr]) eventsByDate[dateStr] = []; eventsByDate[dateStr].push(item); } }); for (let day = 1; day <= daysInMonth; day++) { const date = new Date(year, month, day); const dateStr = date.toISOString().slice(0, 10); const dayEl = document.createElement('div'); dayEl.className = 'calendar-day'; dayEl.textContent = day; dayEl.dataset.date = dateStr; if (eventsByDate[dateStr]) { const dot = document.createElement('div'); dot.className = `event-dot ${type.slice(0, -1)}`; dayEl.appendChild(dot); } grid.appendChild(dayEl); } container.querySelector('[data-action="prev-month"]').addEventListener('click', () => this.changeMonth(-1, type)); container.querySelector('[data-action="next-month"]').addEventListener('click', () => this.changeMonth(1, type)); grid.querySelectorAll('.calendar-day').forEach(day => { day.addEventListener('click', (e) => this.showEventsForDay(e.currentTarget.dataset.date, type)); }); this.animateListItems('.calendar-day');},
+        changeMonth(direction, type) { this.calendarState[type].date.setMonth(this.calendarState[type].date.getMonth() + direction); this.renderCalendarView(type); },
+        showEventsForDay(dateStr, type) { if (!dateStr) return; const container = document.getElementById(`${type}-content`); const listContainer = container.querySelector('#calendar-events-list'); container.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); container.querySelector(`.calendar-day[data-date="${dateStr}"]`)?.classList.add('selected'); const items = (type === 'goals' ? this.state.goals : this.state.journalEntries).filter(item => { const itemDateStr = (type === 'goals' ? item.deadline : item.createdAt)?.slice(0, 10); return itemDateStr === dateStr; }); if (items.length > 0) { listContainer.innerHTML = items.map(item => this.createListItem(item, type.slice(0, -1)).outerHTML).join(''); this.animateListItems('#calendar-events-list .list-item'); } else { listContainer.innerHTML = `<p style="text-align: center; color: var(--text-secondary-color); padding: 20px 0;">لا توجد عناصر لهذا اليوم.</p>`; } },
+        renderTemplatesPage() { const list = document.getElementById('templates-list'); list.innerHTML = ''; if (this.state.templates.length === 0) { list.innerHTML = `<p style="color: var(--text-secondary-color); text-align: center; padding: 20px 0;">ليس لديك أي قوالب. أضف واحداً لتبدأ!</p>`; } else { this.state.templates.forEach(template => { list.appendChild(this.createListItem(template, 'template')); }); this.animateListItems('#templates-list .list-item'); } },
+        saveTemplate() { const id = document.getElementById('template-edit-id').value; const title = document.getElementById('template-title').value; const type = document.getElementById('template-type').value; const description = document.getElementById('template-description').value; const mood = document.getElementById('template-mood').value; const templateData = { title: title, type: type, data: {} }; if (type === 'goal') { templateData.data.description = description; } else if (type === 'journal') { templateData.data.content = description; templateData.data.mood = mood; } if (id) { const index = this.state.templates.findIndex(t => t.id === id); this.state.templates[index] = { ...this.state.templates[index], ...templateData }; } else { templateData.id = 't' + Date.now(); this.state.templates.push(templateData); this.addXP(15, 'إنشاء قالب'); } this.closeModal('templates-modal'); this.renderTemplatesPage(); },
+        applyTemplate(templateId) { const template = this.state.templates.find(t => t.id === templateId); if (!template) return; document.getElementById('item-title').value = template.data.title || template.title || ''; if (template.type === 'goal') { document.getElementById('item-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('item-description').value = template.data.content || ''; document.getElementById('journal-mood').value = template.data.mood || 3; } document.getElementById('templates-container').style.display = 'none'; },
+        renderPropertiesPage() { const list = document.getElementById('properties-list'); list.innerHTML = ''; if (this.state.propertyDefinitions.length === 0) { list.innerHTML = `<p style="color: var(--text-secondary-color); text-align: center; padding: 20px 0;">ليس لديك أي خصائص معرفة. أضف واحدة لتبدأ!</p>`; } else { this.state.propertyDefinitions.forEach(prop => { list.appendChild(this.createListItem(prop, 'propertyDefinition')); }); this.animateListItems('#properties-list .list-item'); } },
+        savePropertyDefinition() { const id = document.getElementById('property-edit-id').value; const name = document.getElementById('property-name').value; const type = document.getElementById('property-type').value; const options = document.getElementById('property-options').value.split(',').map(s => s.trim()).filter(Boolean); const propData = { name, type, options: type === 'select' ? options : [] }; if (id) { const index = this.state.propertyDefinitions.findIndex(p => p.id === id); this.state.propertyDefinitions[index] = { ...this.state.propertyDefinitions[index], ...propData }; } else { propData.id = 'pd' + Date.now(); this.state.propertyDefinitions.push(propData); this.addXP(15, 'إنشاء خاصية'); } this.closeModal('properties-modal'); this.renderPropertiesPage(); },
+        renderProperties(properties) { if (!properties) return ''; return Object.entries(properties).map(([key, value]) => value ? `<span class="property-tag"><strong>${key}:</strong> ${value}</span>` : '').join(''); },
+        renderPropertyInputs(container, currentValues) { this.state.propertyDefinitions.forEach(prop => { const formGroup = document.createElement('div'); formGroup.className = 'form-group'; let inputHTML = `<label for="prop-${prop.id}">${prop.name}</label>`; const currentValue = currentValues[prop.name] || ''; if (prop.type === 'text') { inputHTML += `<input type="text" id="prop-${prop.id}" data-property-name="${prop.name}" value="${currentValue}">`; } else if (prop.type === 'select') { inputHTML += `<select id="prop-${prop.id}" data-property-name="${prop.name}"><option value="">-- اختر --</option>${prop.options.map(opt => `<option value="${opt}" ${currentValue === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select>`; } formGroup.innerHTML = inputHTML; container.appendChild(formGroup); }); },
+        getPropertyValuesFromForm() { const values = {}; document.querySelectorAll('#properties-container [data-property-name]').forEach(input => { values[input.dataset.propertyName] = input.value; }); return values; },
+        initPWA() {
+            const manifest = { "name": "LifeMap", "short_name": "LifeMap", "start_url": ".", "display": "standalone", "background_color": "#111827", "theme_color": "#3b82f6", "description": "خريطتك لحياة منظمة", "icons": [ { "src": "https://placehold.co/192x192/3b82f6/ffffff?text=LM", "sizes": "192x192", "type": "image/png" }, { "src": "https://placehold.co/512x512/3b82f6/ffffff?text=LM", "sizes": "512x512", "type": "image/png" } ] };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            document.querySelector('#manifest-link').setAttribute('href', manifestURL);
+            if ('serviceWorker' in navigator) {
+                const swContent = `const CACHE_NAME = 'lifemap-cache-v1'; const urlsToCache = ['/', './', 'index.html']; self.addEventListener('install', event => { event.waitUntil( caches.open(CACHE_NAME).then(cache => { return cache.addAll(urlsToCache); }) ); }); self.addEventListener('fetch', event => { event.respondWith( caches.match(event.request).then(response => { return response || fetch(event.request); }) ); });`;
+                const swBlob = new Blob([swContent], {type: 'application/javascript'});
+                const swURL = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swURL).then(reg => console.log('SW registered!', reg)).catch(err => console.log('SW registration failed: ', err));
             }
+        },
+        renderGalleryPage() {
+            const container = document.getElementById('gallery-list');
+            container.innerHTML = this.galleryTemplates.map(template => `
+                <div class="gallery-card">
+                    <div class="gallery-card-banner">${template.bannerText}</div>
+                    <div class="gallery-card-content">
+                        <h3>${template.title}</h3>
+                        <p>${template.description}</p>
+                        <button class="btn" data-action="import-gallery-template" data-id="${template.id}" style="width: 100%;">استيراد الخطة</button>
+                    </div>
+                </div>
+            `).join('');
+            this.animateListItems('.gallery-card');
+        },
+        confirmImportGalleryTemplate(templateId) {
+            const template = this.galleryTemplates.find(t => t.id === templateId);
+            if (!template) return;
+            const goalCount = template.pillars.reduce((acc, p) => acc + p.goals.length, 0);
+            const habitCount = template.pillars.reduce((acc, p) => acc + (p.habits?.length || 0), 0);
+            this.showConfirmation(
+                `استيراد "${template.title}"؟`,
+                `سيؤدي هذا إلى إضافة ${goalCount} هدفًا جديدًا، و ${habitCount} عادة مقترحة، وتدوينة ترحيبية. هل أنت متأكد؟`,
+                () => { this.closeModal('confirmation-modal'); this.importGalleryTemplate(templateId); }
+            );
+        },
+        importGalleryTemplate(templateId) {
+            const template = this.galleryTemplates.find(t => t.id === templateId); if (!template) return;
+            const now = new Date(); const titleToIdMap = {};
+            template.pillars.forEach(pillar => { if (pillar.habits) { pillar.habits.forEach(habitTitle => { const habitExists = this.state.habits.some(h => h.title.toLowerCase() === habitTitle.toLowerCase()); if (!habitExists) { const newHabit = { id: 'h' + Date.now() + Math.random(), title: habitTitle, completedToday: false, streak: 0, createdAt: now.toISOString(), completionDates: [] }; this.state.habits.push(newHabit); } }); } });
+            template.pillars.forEach(pillar => { pillar.goals.forEach(goalData => { const deadline = new Date(now); deadline.setFullYear(deadline.getFullYear() + goalData.years); const newGoal = { id: 'g' + Date.now() + Math.random(), title: goalData.title, description: goalData.description, deadline: deadline.toISOString().slice(0,10), createdAt: now.toISOString(), status: 'todo', progress: 0, properties: { 'المحور': pillar.icon, 'المدى': `${goalData.years} سنوات`, 'المصدر': 'المعرض' }, linkedItems: [], completedAt: null }; this.state.goals.push(newGoal); titleToIdMap[goalData.title] = newGoal.id; }); });
+            this.state.goals.forEach(goal => { const linkMatches = goal.description.match(/\[\[(.*?)\]\]/g); if (linkMatches) { linkMatches.forEach(match => { const linkedTitle = match.slice(2, -2); const linkedId = titleToIdMap[linkedTitle] || this.findItemByTitle(linkedTitle)?.id; if (linkedId && !goal.linkedItems.includes(linkedId)) { goal.linkedItems.push(linkedId); } }); } });
+            const welcomeJournal = { id: 'j' + Date.now(), content: `## أهلاً بك في خطة البنّاء!\n\nلقد قمت للتو باستيراد خطة شاملة لمستقبلك. هذه مجرد نقطة بداية، لا تتردد في تعديل الأهداف وتخصيصها لتناسب طموحاتك الفريدة.\n\n**الخطوات التالية المقترحة:**\n1.  اذهب إلى صفحة الأهداف وقم بمراجعة الأهداف الجديدة.\n2.  ابدأ بالالتزام بالعادات اليومية التي تم إنشاؤها.\n3.  استخدم هذه اليومية لتسجيل أفكارك وتقدمك.\n\nبالتوفيق في رحلتك!`, mood: 5, createdAt: now.toISOString(), linkedItems: Object.values(titleToIdMap) };
+            this.state.journalEntries.push(welcomeJournal);
+            this.navigateTo('goals');
+            this.addXP(50, 'استيراد خطة');
         },
         showConfirmation(title, message, onConfirm) {
             const modal = document.getElementById('confirmation-modal');
             document.getElementById('confirmation-title').textContent = title;
             document.getElementById('confirmation-message').textContent = message;
-            
-            const newConfirmBtn = document.getElementById('confirmation-confirm').cloneNode(true);
-            document.getElementById('confirmation-confirm').parentNode.replaceChild(newConfirmBtn, document.getElementById('confirmation-confirm'));
-            
+            const confirmBtn = document.getElementById('confirmation-confirm');
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
             newConfirmBtn.addEventListener('click', onConfirm);
             document.getElementById('confirmation-cancel').addEventListener('click', () => this.closeModal('confirmation-modal'));
-
-            modal.style.display = 'flex';
+            this.openModal('confirmation-modal');
         },
-
-        // Charting methods
-        renderWeeklyProgressChart() {
-            const ctx = document.getElementById('weekly-progress-chart')?.getContext('2d');
-            if (!ctx) return;
-
-            if (this.charts.weeklyProgress) {
-                this.charts.weeklyProgress.destroy();
-            }
-            
-            const today = new Date();
-            const labels = [];
-            const data = [];
-            for(let i=6; i>=0; i--) {
-                const date = new Date(today);
-                date.setDate(today.getDate() - i);
-                labels.push(date.toLocaleDateString('ar-EG', { weekday: 'short' }));
-                const dateString = date.toISOString().slice(0, 10);
-                const completedTasks = this.state.todos.filter(t => t.completed && t.completedAt?.slice(0, 10) === dateString).length;
-                data.push(completedTasks);
-            }
-
-            this.charts.weeklyProgress = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'المهام المنجزة',
-                        data: data,
-                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-soft-color'),
-                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'),
-                        borderWidth: 2,
-                        borderRadius: 8,
-                        hoverBackgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color')
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        },
-
-        // Pomodoro methods
-        openPomodoroModal(taskId) {
-            const task = this.findItem(taskId, 'todo');
-            if(!task || task.completed) return;
-            
-            this.pomodoro.taskId = taskId;
-            this.resetPomodoro(true);
-
-            document.getElementById('pomodoro-task-title').textContent = task.title;
-            const modal = document.getElementById('pomodoro-modal');
-            modal.style.display = 'flex';
-            anime({ targets: '#pomodoro-modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' });
-        },
-        updateTimerDisplay() {
-            const minutes = Math.floor(this.pomodoro.timeLeft / 60).toString().padStart(2, '0');
-            const seconds = (this.pomodoro.timeLeft % 60).toString().padStart(2, '0');
-            document.getElementById('pomodoro-timer-display').textContent = `${minutes}:${seconds}`;
-        },
-        startPomodoro() {
-            if(this.pomodoro.timer) clearInterval(this.pomodoro.timer);
-            this.pomodoro.isPaused = false;
-            document.getElementById('pomodoro-start').style.display = 'none';
-            document.getElementById('pomodoro-pause').style.display = 'inline-flex';
-
-            this.pomodoro.timer = setInterval(() => {
-                this.pomodoro.timeLeft--;
-                this.updateTimerDisplay();
-
-                if (this.pomodoro.timeLeft < 0) {
-                    clearInterval(this.pomodoro.timer);
-                    this.handlePomodoroCompletion();
-                }
-            }, 1000);
-        },
-        pausePomodoro() {
-            clearInterval(this.pomodoro.timer);
-            this.pomodoro.isPaused = true;
-            document.getElementById('pomodoro-start').style.display = 'inline-flex';
-            document.getElementById('pomodoro-pause').style.display = 'none';
-        },
-        resetPomodoro(isOpening = false) {
-            clearInterval(this.pomodoro.timer);
-            this.pomodoro.isPaused = true;
-            
-            const task = this.findItem(this.pomodoro.taskId, 'todo');
-            if(isOpening) { // reset to work session only when opening
-                 this.pomodoro.mode = 'work';
-                 this.pomodoro.timeLeft = this.pomodoro.initialTime = 25 * 60;
-                 document.getElementById('pomodoro-status').textContent = 'حان وقت التركيز!';
-            }
-           
-            this.updateTimerDisplay();
-            document.getElementById('pomodoro-start').style.display = 'inline-flex';
-            document.getElementById('pomodoro-pause').style.display = 'none';
-        },
-        handlePomodoroCompletion() {
-            if (this.pomodoro.mode === 'work') {
-                this.pomodoro.sessions++;
-                const task = this.findItem(this.pomodoro.taskId, 'todo');
-                if(task) {
-                    task.pomodoros_completed = (task.pomodoros_completed || 0) + 1;
-                    if(task.pomodoros_completed >= task.pomodoros_total) {
-                        task.completed = true;
-                        task.completedAt = new Date().toISOString();
-                    }
-                }
-                this.addXP(25);
-                
-                // Switch to break
-                if (this.pomodoro.sessions % 4 === 0) {
-                    this.pomodoro.mode = 'longBreak';
-                    this.pomodoro.timeLeft = this.pomodoro.initialTime = 15 * 60;
-                    document.getElementById('pomodoro-status').textContent = 'أحسنت! خذ استراحة طويلة.';
-                } else {
-                    this.pomodoro.mode = 'shortBreak';
-                    this.pomodoro.timeLeft = this.pomodoro.initialTime = 5 * 60;
-                    document.getElementById('pomodoro-status').textContent = 'رائع! استراحة قصيرة.';
-                }
-            } else { // Break finished
-                this.pomodoro.mode = 'work';
-                this.pomodoro.timeLeft = this.pomodoro.initialTime = 25 * 60;
-                document.getElementById('pomodoro-status').textContent = 'حان وقت التركيز!';
-            }
-
-            this.updateTimerDisplay();
-            document.getElementById('pomodoro-start').style.display = 'inline-flex';
-            document.getElementById('pomodoro-pause').style.display = 'none';
-            
-            new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3').play();
-            this.render(); // Re-render to update lists
-        },
+        toggleTemplateFields(type) { document.getElementById('template-description-group').style.display = 'block'; document.getElementById('template-mood-group').style.display = type === 'journal' ? 'block' : 'none'; },
         
-        initPWA() {
-            // Placeholder for PWA initialization logic
-        },
+        // --- Addition 1 Function: Weekly Summary ---
+        renderWeeklySummary() {
+            const container = document.getElementById('weekly-summary-content');
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
+            const goalsCompleted = this.state.goals.filter(g => g.status === 'done' && new Date(g.completedAt) > oneWeekAgo).length;
+            const goalsCreated = this.state.goals.filter(g => new Date(g.createdAt) > oneWeekAgo).length;
+            const journalEntriesMade = this.state.journalEntries.filter(j => new Date(j.createdAt) > oneWeekAgo).length;
+            
+            let habitsCompleted = 0;
+            this.state.habits.forEach(h => {
+                habitsCompleted += h.completionDates.filter(d => new Date(d) > oneWeekAgo).length;
+            });
+            
+            let summaryHTML = '<ul>';
+            let activityFound = false;
+
+            if (goalsCompleted > 0) {
+                summaryHTML += `<li><span class="icon">✅</span> أتممت <strong>${goalsCompleted}</strong> من الأهداف. عمل رائع!</li>`;
+                activityFound = true;
+            }
+            if (habitsCompleted > 0) {
+                summaryHTML += `<li><span class="icon">🔁</span> التزمت بالعادات <strong>${habitsCompleted}</strong> مرة. استمر في البناء!</li>`;
+                activityFound = true;
+            }
+            if (journalEntriesMade > 0) {
+                summaryHTML += `<li><span class="icon">✍️</span> كتبت <strong>${journalEntriesMade}</strong> تدوينة في يومياتك.</li>`;
+                activityFound = true;
+            }
+             if (goalsCreated > 0) {
+                summaryHTML += `<li><span class="icon">💡</span> أضفت <strong>${goalsCreated}</strong> هدفًا جديدًا. بداية ممتازة!</li>`;
+                activityFound = true;
+            }
+
+            if (!activityFound) {
+                summaryHTML += `<p style="color: var(--text-secondary-color); text-align: center;">لم يتم تسجيل أي نشاط هذا الأسبوع. هيا بنا نبدأ!</p>`;
+            }
+
+            summaryHTML += '</ul>';
+            container.innerHTML = summaryHTML;
+        }
     };
-
     app.init();
 });
 </script>
