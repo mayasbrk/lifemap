@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>LifeMap – خريطتك لحياة منظمة</title>
+    <meta name="theme-color" content="#3b82f6"/>
+    <link id="manifest-link" rel="manifest">
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,6 +79,7 @@
             margin-bottom: 25px;
         }
         h1 { font-size: 28px; font-weight: 700; margin-bottom: 0; }
+        .page-header .actions { display: flex; gap: 8px; }
         
         /* --- Bottom Navigation Bar --- */
         .bottom-nav {
@@ -221,7 +224,13 @@
 <div class="container">
     <!-- Pages -->
     <div id="dashboard" class="page active">
-        <div class="page-header"><h1><span id="greeting"></span></h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="page-header">
+            <h1><span id="greeting"></span></h1>
+            <div class="actions">
+                <button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                <button class="icon-btn" data-action="open-settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.05.26 1.431l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 01-.26-1.431l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button>
+            </div>
+        </div>
         <div class="card">
             <h2>🏆 الرتبة والتقدم</h2>
             <div style="display: flex; align-items: center; gap: 20px;">
@@ -236,21 +245,21 @@
         <div class="card"><h2>🎯 أهدافك النشطة</h2><div id="dashboard-goals-list"></div></div>
     </div>
     <div id="habits" class="page">
-        <div class="page-header"><h1>العادات</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="page-header"><h1>العادات</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
         <div class="card" id="habits-list"></div>
     </div>
     <div id="goals" class="page">
-        <div class="page-header"><h1>الأهداف</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="page-header"><h1>الأهداف</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
         <div class="view-toggler" id="goals-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="board">لوحة</button><button data-view="calendar">تقويم</button></div>
         <div id="goals-content"></div>
     </div>
     <div id="journal" class="page">
-        <div class="page-header"><h1>دفتر اليوميات</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="page-header"><h1>دفتر اليوميات</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
         <div class="view-toggler" id="journal-view-toggler"><button data-view="list" class="active">قائمة</button><button data-view="calendar">تقويم</button></div>
         <div id="journal-content"></div>
     </div>
     <div id="graph" class="page">
-        <div class="page-header"><h1>خريطة الحياة</h1><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div>
+        <div class="page-header"><h1>خريطة الحياة</h1><div class="actions"><button class="icon-btn" data-action="open-search"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button></div></div>
         <div id="graph-view-container"></div>
     </div>
     <div id="settings" class="page">
@@ -266,11 +275,11 @@
         </div>
     </div>
     <div id="templates" class="page">
-        <div class="page-header"><h1>إدارة القوالب</h1><button class="icon-btn" data-action="open-settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+        <div class="page-header"><h1>إدارة القوالب</h1><button class="icon-btn" data-action="open-settings-from-subpage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
         <div class="card" id="templates-list-container"><div id="templates-list"></div><button id="add-template-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة قالب جديد</button></div>
     </div>
     <div id="properties" class="page">
-        <div class="page-header"><h1>إدارة الخصائص</h1><button class="icon-btn" data-action="open-settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+        <div class="page-header"><h1>إدارة الخصائص</h1><button class="icon-btn" data-action="open-settings-from-subpage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
         <div class="card" id="properties-list-container"><div id="properties-list"></div><button id="add-property-btn" class="btn" style="width: 100%; margin-top: 20px;">+ إضافة خاصية جديدة</button></div>
     </div>
 </div>
@@ -299,7 +308,7 @@
     </div>
 </div>
 <div id="search-modal" class="modal-overlay"><div class="modal-content search-modal-content"><input type="search" id="search-input" placeholder="ابحث في كل شيء..." autocomplete="off"><div id="search-results"></div></div></div>
-<div id="templates-modal" class="modal-overlay"><div id="templates-modal-content" class="modal-content"><h3 id="templates-modal-title"></h3><form id="templates-modal-form"><input type="hidden" id="template-edit-id"><div class="form-group" id="template-type-group"><label for="template-type">نوع القالب</label><select id="template-type"><option value="goal">هدف</option><option value="journal">يومية</option></select></div><div class="form-group" id="template-title-group"><label for="template-title">عنوان القالب</label><input type="text" id="template-title" required></div><div class="form-group" id="template-description-group"><label for="template-description">محتوى القالب</label><textarea id="template-description" rows="4"></textarea></div><div class="form-group" id="template-mood-group"><label>المزاج الافتراضي</label><select id="template-mood"><option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option></select></div><div class="modal-actions"><button type="button" id="template-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ القالب</button></div></form></div></div>
+<div id="templates-modal" class="modal-overlay"><div id="templates-modal-content" class="modal-content"><h3 id="templates-modal-title"></h3><form id="templates-modal-form"><input type="hidden" id="template-edit-id"><div class="form-group"><label for="template-type">نوع القالب</label><select id="template-type"><option value="goal">هدف</option><option value="journal">يومية</option></select></div><div class="form-group"><label for="template-title">عنوان القالب</label><input type="text" id="template-title" required></div><div class="form-group" id="template-description-group"><label for="template-description">محتوى القالب</label><textarea id="template-description" rows="4"></textarea></div><div class="form-group" id="template-mood-group"><label>المزاج الافتراضي</label><select id="template-mood"><option value="5">😃 رائع</option><option value="4">😊 جيد</option><option value="3">😐 عادي</option><option value="2">😕 سيء</option><option value="1">😞 سيء جدًا</option></select></div><div class="modal-actions"><button type="button" id="template-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ القالب</button></div></form></div></div>
 <div id="properties-modal" class="modal-overlay"><div class="modal-content"><h3 id="properties-modal-title"></h3><form id="properties-modal-form"><input type="hidden" id="property-edit-id"><div class="form-group"><label for="property-name">اسم الخاصية</label><input type="text" id="property-name" required></div><div class="form-group"><label for="property-type">نوع الخاصية</label><select id="property-type"><option value="text">نص</option><option value="select">اختيار</option></select></div><div class="form-group" id="property-options-group" style="display:none;"><label for="property-options">خيارات (افصل بينها بفاصلة)</label><textarea id="property-options" rows="3"></textarea></div><div class="modal-actions"><button type="button" id="property-modal-cancel" class="btn btn-secondary">إلغاء</button><button type="submit" class="btn">حفظ الخاصية</button></div></form></div></div>
 
 <!-- Confetti Canvas -->
@@ -318,12 +327,11 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'graph', label: 'الخريطة', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>` },
         ],
         ranks: [ { name: 'مبتدئ', xp: 0 }, { name: 'منظم', xp: 100 }, { name: 'مثابر', xp: 300 }, { name: 'مُنجز', xp: 700 }, { name: 'خبير', xp: 1500 }, { name: 'سيد الحياة', xp: 3000 } ],
-        init() { this.loadState(); this.setupEventListeners(); this.checkDate(); this.applyTheme(this.state.settings.theme); this.renderNav(); this.navigateTo(this.state.currentPage || 'dashboard', true); },
+        init() { this.loadState(); this.setupEventListeners(); this.checkDate(); this.applyTheme(this.state.settings.theme); this.renderNav(); this.navigateTo(this.state.currentPage || 'dashboard', true); this.initPWA(); },
         loadState() {
             const savedState = localStorage.getItem('lifeMapState');
             if (savedState) {
                 this.state = JSON.parse(savedState);
-                // Migration for old data
                 this.state.goals.forEach(g => { if (!g.status) g.status = 'todo'; if (!g.properties) g.properties = {}; });
                 if (!this.state.settings.goalsView) this.state.settings.goalsView = 'list';
                 if (!this.state.settings.journalView) this.state.settings.journalView = 'list';
@@ -362,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.saveState();
         },
         renderNav() { const navContainer = document.querySelector('.bottom-nav'); navContainer.innerHTML = this.navItems.map(item => `<div class="nav-item ${this.state.currentPage === item.id ? 'active' : ''}" data-page="${item.id}">${item.icon}<span>${item.label}</span><div class="nav-indicator"></div></div>`).join(''); },
-        renderDashboard() { document.getElementById('greeting').textContent = `أهلاً، ${this.state.user.name || 'مستكشف'}!`; this.updateRank(); document.getElementById('ai-recommendation-text').textContent = "صنّف أهدافك باستخدام الخصائص المخصصة الجديدة!"; const goalsList = document.getElementById('dashboard-goals-list'); const activeGoals = this.state.goals.filter(g => g.status !== 'done').slice(0, 3); goalsList.innerHTML = activeGoals.length === 0 ? `<p style="color: var(--text-secondary-color);">لا توجد أهداف نشطة. أضف هدفًا جديدًا!</p>` : activeGoals.map(goal => this.createListItem(goal, 'goal').outerHTML).join(''); },
+        renderDashboard() { document.getElementById('greeting').textContent = `أهلاً، ${this.state.user.name || 'مستكشف'}!`; this.updateRank(); document.getElementById('ai-recommendation-text').textContent = "يمكنك الآن تثبيت التطبيق على جهازك والعمل بدون إنترنت!"; const goalsList = document.getElementById('dashboard-goals-list'); const activeGoals = this.state.goals.filter(g => g.status !== 'done').slice(0, 3); goalsList.innerHTML = activeGoals.length === 0 ? `<p style="color: var(--text-secondary-color);">لا توجد أهداف نشطة. أضف هدفًا جديدًا!</p>` : activeGoals.map(goal => this.createListItem(goal, 'goal').outerHTML).join(''); },
         renderHabits() { const list = document.getElementById('habits-list'); list.innerHTML = this.state.habits.length === 0 ? `<div style="text-align:center; padding: 40px 0; color: var(--text-secondary-color);">ابدأ ببناء عادات إيجابية.</div>` : ''; this.state.habits.forEach(habit => list.appendChild(this.createListItem(habit, 'habit'))); this.animateListItems('.habit-item'); },
         renderGoals() { const view = this.state.settings.goalsView; const toggler = document.getElementById('goals-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="board"]`).classList.toggle('active', view === 'board'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderGoalsList(); else if (view === 'board') this.renderGoalsBoard(); else this.renderCalendarView('goals'); },
         renderJournal() { const view = this.state.settings.journalView; const toggler = document.getElementById('journal-view-toggler'); toggler.querySelector(`[data-view="list"]`).classList.toggle('active', view === 'list'); toggler.querySelector(`[data-view="calendar"]`).classList.toggle('active', view === 'calendar'); if (view === 'list') this.renderJournalList(); else this.renderCalendarView('journal'); },
@@ -404,9 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const id = e.target.closest('[data-id]')?.dataset.id;
                     let type = e.target.closest('[data-type]')?.dataset.type;
                     if (action === 'open-search') { this.openSearch(); }
+                    else if (action === 'open-settings') { this.navigateTo('settings'); }
+                    else if (action === 'open-settings-from-subpage') { this.navigateTo('settings'); }
                     else if (action === 'toggle-habit' && id) { this.toggleHabit(id); }
                     else if (action === 'delete-item' && id) { if(!type) type = this.getItemTypeById(id); this.deleteItem(id, type); }
-                    else if (action === 'open-settings') { this.navigateTo('settings'); }
                     return;
                 }
                 const listItem = e.target.closest('.list-item, .kanban-card');
@@ -504,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
         changeMonth(direction, type) { this.calendarState[type].date.setMonth(this.calendarState[type].date.getMonth() + direction); this.renderCalendarView(type); },
         showEventsForDay(dateStr, type) { if (!dateStr) return; const container = document.getElementById(`${type}-content`); const listContainer = container.querySelector('#calendar-events-list'); container.querySelectorAll('.calendar-day.selected').forEach(d => d.classList.remove('selected')); container.querySelector(`.calendar-day[data-date="${dateStr}"]`)?.classList.add('selected'); const items = (type === 'goals' ? this.state.goals : this.state.journalEntries).filter(item => { const itemDateStr = (type === 'goals' ? item.deadline : item.createdAt)?.slice(0, 10); return itemDateStr === dateStr; }); if (items.length > 0) { listContainer.innerHTML = items.map(item => this.createListItem(item, type.slice(0, -1)).outerHTML).join(''); } else { listContainer.innerHTML = `<p style="text-align: center; color: var(--text-secondary-color); padding: 20px 0;">لا توجد عناصر لهذا اليوم.</p>`; } },
         renderTemplatesPage() { const list = document.getElementById('templates-list'); list.innerHTML = ''; if (this.state.templates.length === 0) { list.innerHTML = `<p style="color: var(--text-secondary-color); text-align: center; padding: 20px 0;">ليس لديك أي قوالب. أضف واحداً لتبدأ!</p>`; } else { this.state.templates.forEach(template => { list.appendChild(this.createListItem(template, 'template')); }); } },
-        openTemplateModal(id = null) { const modal = document.getElementById('templates-modal'); const form = form.querySelector('form'); form.reset(); document.getElementById('template-edit-id').value = id; if (id) { const template = this.state.templates.find(t => t.id === id); document.getElementById('templates-modal-title').textContent = 'تعديل القالب'; document.getElementById('template-title').value = template.title; document.getElementById('template-type').value = template.type; document.getElementById('template-type').disabled = true; this.toggleTemplateFields(template.type); if (template.type === 'goal') { document.getElementById('template-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('template-description').value = template.data.content || ''; document.getElementById('template-mood').value = template.data.mood || 3; } } else { document.getElementById('templates-modal-title').textContent = 'إضافة قالب جديد'; document.getElementById('template-type').disabled = false; this.toggleTemplateFields('goal'); } modal.style.display = 'flex'; anime({ targets: '#templates-modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' }); },
+        openTemplateModal(id = null) { const modal = document.getElementById('templates-modal'); const form = modal.querySelector('form'); form.reset(); document.getElementById('template-edit-id').value = id; if (id) { const template = this.state.templates.find(t => t.id === id); document.getElementById('templates-modal-title').textContent = 'تعديل القالب'; document.getElementById('template-title').value = template.title; document.getElementById('template-type').value = template.type; document.getElementById('template-type').disabled = true; this.toggleTemplateFields(template.type); if (template.type === 'goal') { document.getElementById('template-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('template-description').value = template.data.content || ''; document.getElementById('template-mood').value = template.data.mood || 3; } } else { document.getElementById('templates-modal-title').textContent = 'إضافة قالب جديد'; document.getElementById('template-type').disabled = false; this.toggleTemplateFields('goal'); } modal.style.display = 'flex'; anime({ targets: '#templates-modal .modal-content', opacity: [0, 1], scale: [0.9, 1], duration: 300, easing: 'easeOutCubic' }); },
         toggleTemplateFields(type) { document.getElementById('template-description-group').style.display = 'block'; document.getElementById('template-mood-group').style.display = type === 'journal' ? 'block' : 'none'; },
         saveTemplate() { const id = document.getElementById('template-edit-id').value; const title = document.getElementById('template-title').value; const type = document.getElementById('template-type').value; const description = document.getElementById('template-description').value; const mood = document.getElementById('template-mood').value; const templateData = { title: title, type: type, data: {} }; if (type === 'goal') { templateData.data.description = description; } else if (type === 'journal') { templateData.data.content = description; templateData.data.mood = mood; } if (id) { const index = this.state.templates.findIndex(t => t.id === id); this.state.templates[index] = { ...this.state.templates[index], ...templateData }; } else { templateData.id = 't' + Date.now(); this.state.templates.push(templateData); } this.closeModal('templates-modal'); this.renderTemplatesPage(); },
         applyTemplate(templateId) { const template = this.state.templates.find(t => t.id === templateId); if (!template) return; document.getElementById('item-title').value = template.data.title || template.title || ''; if (template.type === 'goal') { document.getElementById('item-description').value = template.data.description || ''; } else if (template.type === 'journal') { document.getElementById('item-description').value = template.data.content || ''; document.getElementById('journal-mood').value = template.data.mood || 3; } document.getElementById('templates-container').style.display = 'none'; },
@@ -513,7 +522,62 @@ document.addEventListener('DOMContentLoaded', () => {
         savePropertyDefinition() { const id = document.getElementById('property-edit-id').value; const name = document.getElementById('property-name').value; const type = document.getElementById('property-type').value; const options = document.getElementById('property-options').value.split(',').map(s => s.trim()).filter(Boolean); const propData = { name, type, options: type === 'select' ? options : [] }; if (id) { const index = this.state.propertyDefinitions.findIndex(p => p.id === id); this.state.propertyDefinitions[index] = { ...this.state.propertyDefinitions[index], ...propData }; } else { propData.id = 'pd' + Date.now(); this.state.propertyDefinitions.push(propData); } this.closeModal('properties-modal'); this.renderPropertiesPage(); },
         renderProperties(properties) { if (!properties) return ''; return Object.entries(properties).map(([key, value]) => value ? `<span class="property-tag"><strong>${key}:</strong> ${value}</span>` : '').join(''); },
         renderPropertyInputs(container, currentValues) { this.state.propertyDefinitions.forEach(prop => { const formGroup = document.createElement('div'); formGroup.className = 'form-group'; let inputHTML = `<label for="prop-${prop.id}">${prop.name}</label>`; const currentValue = currentValues[prop.name] || ''; if (prop.type === 'text') { inputHTML += `<input type="text" id="prop-${prop.id}" data-property-name="${prop.name}" value="${currentValue}">`; } else if (prop.type === 'select') { inputHTML += `<select id="prop-${prop.id}" data-property-name="${prop.name}"><option value="">-- اختر --</option>${prop.options.map(opt => `<option value="${opt}" ${currentValue === opt ? 'selected' : ''}>${opt}</option>`).join('')}</select>`; } formGroup.innerHTML = inputHTML; container.appendChild(formGroup); }); },
-        getPropertyValuesFromForm() { const values = {}; document.querySelectorAll('#properties-container [data-property-name]').forEach(input => { values[input.dataset.propertyName] = input.value; }); return values; }
+        getPropertyValuesFromForm() { const values = {}; document.querySelectorAll('#properties-container [data-property-name]').forEach(input => { values[input.dataset.propertyName] = input.value; }); return values; },
+
+        // --- PWA Logic ---
+        initPWA() {
+            const manifest = {
+                "name": "LifeMap",
+                "short_name": "LifeMap",
+                "start_url": ".",
+                "display": "standalone",
+                "background_color": "#111827",
+                "theme_color": "#3b82f6",
+                "description": "خريطتك لحياة منظمة",
+                "icons": [
+                    { "src": "https://placehold.co/192x192/3b82f6/ffffff?text=LM", "sizes": "192x192", "type": "image/png" },
+                    { "src": "https://placehold.co/512x512/3b82f6/ffffff?text=LM", "sizes": "512x512", "type": "image/png" }
+                ]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            document.querySelector('#manifest-link').setAttribute('href', manifestURL);
+
+            if ('serviceWorker' in navigator) {
+                const swContent = `
+                    const CACHE_NAME = 'lifemap-cache-v1';
+                    const urlsToCache = [
+                        '/',
+                        './',
+                        'index.html'
+                    ];
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME).then(cache => {
+                                console.log('Opened cache');
+                                return cache.addAll(urlsToCache);
+                            })
+                        );
+                    });
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request).then(response => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+                const swBlob = new Blob([swContent], {type: 'application/javascript'});
+                const swURL = URL.createObjectURL(swBlob);
+
+                navigator.serviceWorker.register(swURL)
+                    .then(registration => console.log('ServiceWorker registration successful with scope: ', registration.scope))
+                    .catch(error => console.log('ServiceWorker registration failed: ', error));
+            }
+        }
     };
     app.init();
 });
